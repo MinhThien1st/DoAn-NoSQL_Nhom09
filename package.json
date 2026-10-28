@@ -1,0 +1,25 @@
+{
+  "name": "bus-route-graph-system",
+  "version": "1.0.0",
+  "description": "He thong quan ly lo trinh va tim duong xe buyt bang Graph Database Neo4j",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "neo4j",
+    "graph-database",
+    "bus-route",
+    "shortest-path",
+    "leaflet"
+  ],
+  "author": "Nhom 12 - NoSQL",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "neo4j-driver": "^5.28.1"
+  }
+}
