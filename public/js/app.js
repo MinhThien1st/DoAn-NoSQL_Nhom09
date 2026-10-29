@@ -11,10 +11,16 @@ let allRoutes = [];
 let isSimulationActive = true;
 let simulationInterval = null;
 
+// Quản lý Token phiên đăng nhập Quản trị viên
+let adminToken = sessionStorage.getItem('bus_admin_token') || null;
+
 // Khởi tạo ứng dụng khi DOM sẵn sàng
 document.addEventListener('DOMContentLoaded', () => {
   initMap();
   initTabs();
+  initAdminAuth();
+  initNearMeFeature();
+  initGraphAnalyticsFeature();
   loadDbStatus();
   loadStations();
   loadRoutes();
@@ -39,7 +45,7 @@ function initMap() {
     attribution: '&copy; Google Maps Transit'
   }).addTo(map);
 
-  // Sự kiện click lên bản đồ để lấy tọa độ (hỗ trợ Admin SV1)
+  // Sự kiện click lên bản đồ để lấy tọa độ (hỗ trợ Admin)
   map.on('click', (e) => {
     const latInput = document.getElementById('addStationLat');
     const lngInput = document.getElementById('addStationLng');
@@ -48,6 +54,11 @@ function initMap() {
       lngInput.value = e.latlng.lng.toFixed(6);
     }
   });
+
+  // Đảm bảo Leaflet tính toán chuẩn kích thước container bản đồ
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 300);
 }
 
 // 2. Chuyển đổi giữa các Tab Sidebar
@@ -68,6 +79,177 @@ function initTabs() {
       setTimeout(() => map.invalidateSize(), 200);
     });
   });
+}
+
+// ==============================================================================
+// HỆ THỐNG XÁC THỰC QUẢN TRỊ VIÊN (ADMIN AUTHENTICATION & RBAC)
+// ==============================================================================
+function initAdminAuth() {
+  updateAdminUI();
+
+  // Nút trên Navbar
+  const btnAuth = document.getElementById('btnAdminAuth');
+  if (btnAuth) {
+    btnAuth.addEventListener('click', () => {
+      if (adminToken) {
+        if (confirm('Bạn có muốn đăng xuất khỏi phiên Quản trị viên (Admin) không?')) {
+          handleAdminLogout();
+        }
+      } else {
+        openAdminModal();
+      }
+    });
+  }
+
+  // Nút mở modal từ màn hình khóa tab Admin
+  const btnTrigger = document.getElementById('btnTriggerLoginModal');
+  if (btnTrigger) {
+    btnTrigger.addEventListener('click', openAdminModal);
+  }
+
+  // Nút đóng modal
+  const btnClose = document.getElementById('btnCloseAdminModal');
+  if (btnClose) {
+    btnClose.addEventListener('click', closeAdminModal);
+  }
+
+  // Đóng modal khi click ra ngoài overlay
+  const modalOverlay = document.getElementById('adminAuthModal');
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeAdminModal();
+    });
+  }
+
+  // Submit form đăng nhập
+  const formAuth = document.getElementById('formAdminAuth');
+  if (formAuth) {
+    formAuth.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('adminUsernameInput').value.trim();
+      const p = document.getElementById('adminPasswordInput').value.trim();
+      await executeAdminLogin(u, p);
+    });
+  }
+
+  // Đăng nhập nhanh 1-Click Demo
+  const btnQuick = document.getElementById('btnQuickDemoAuth');
+  if (btnQuick) {
+    btnQuick.addEventListener('click', async () => {
+      await executeAdminLogin('admin', '123456');
+    });
+  }
+
+  // Nút đăng xuất bên trong tab Admin
+  const btnLogout = document.getElementById('btnLogoutAdmin');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', handleAdminLogout);
+  }
+}
+
+function updateAdminUI() {
+  const btnAuth = document.getElementById('btnAdminAuth');
+  const authLabel = document.getElementById('adminAuthLabel');
+  const lockTag = document.getElementById('adminLockTag');
+  const lockedGuard = document.getElementById('adminLockedGuard');
+  const unlockedArea = document.getElementById('adminUnlockedArea');
+
+  if (adminToken) {
+    // Đã đăng nhập
+    if (btnAuth) {
+      btnAuth.classList.add('logged-in');
+      btnAuth.title = 'Đang đăng nhập: Admin (Click để đăng xuất)';
+    }
+    if (authLabel) authLabel.innerHTML = '<i class="fa-solid fa-circle-check text-success"></i> Quản trị viên';
+    if (lockTag) {
+      lockTag.classList.add('unlocked');
+      lockTag.innerHTML = '<i class="fa-solid fa-unlock"></i>';
+    }
+    if (lockedGuard) lockedGuard.style.display = 'none';
+    if (unlockedArea) unlockedArea.style.display = 'block';
+  } else {
+    // Chưa đăng nhập
+    if (btnAuth) {
+      btnAuth.classList.remove('logged-in');
+      btnAuth.title = 'Đăng nhập tài khoản Quản trị viên';
+    }
+    if (authLabel) authLabel.innerHTML = 'Đăng nhập Admin';
+    if (lockTag) {
+      lockTag.classList.remove('unlocked');
+      lockTag.innerHTML = '<i class="fa-solid fa-lock"></i>';
+    }
+    if (lockedGuard) lockedGuard.style.display = 'block';
+    if (unlockedArea) unlockedArea.style.display = 'none';
+  }
+}
+
+function openAdminModal() {
+  const modal = document.getElementById('adminAuthModal');
+  const alertBox = document.getElementById('adminLoginAlert');
+  if (alertBox) alertBox.style.display = 'none';
+  if (modal) modal.classList.add('show');
+}
+
+function closeAdminModal() {
+  const modal = document.getElementById('adminAuthModal');
+  if (modal) modal.classList.remove('show');
+}
+
+async function executeAdminLogin(username, password) {
+  const alertBox = document.getElementById('adminLoginAlert');
+  const btnSubmit = document.getElementById('btnSubmitLogin');
+  if (btnSubmit) {
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...';
+  }
+
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      if (alertBox) {
+        alertBox.textContent = data.error || 'Tài khoản hoặc mật khẩu không chính xác!';
+        alertBox.style.display = 'block';
+      }
+      return;
+    }
+
+    // Đăng nhập thành công
+    adminToken = data.token;
+    sessionStorage.setItem('bus_admin_token', adminToken);
+    updateAdminUI();
+    closeAdminModal();
+
+    // Tự động chuyển sang Tab Admin ngay lập tức
+    const tabAdminBtn = document.getElementById('tabAdminBtn');
+    if (tabAdminBtn) tabAdminBtn.click();
+
+  } catch (err) {
+    if (alertBox) {
+      alertBox.textContent = 'Lỗi kết nối máy chủ: ' + err.message;
+      alertBox.style.display = 'block';
+    }
+  } finally {
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Đăng nhập Quản trị';
+    }
+  }
+}
+
+function handleAdminLogout() {
+  adminToken = null;
+  sessionStorage.removeItem('bus_admin_token');
+  updateAdminUI();
+
+  // Chuyển về Tab Tìm đường
+  const defaultTab = document.querySelector('.tab-btn[data-tab="tab-routing"]');
+  if (defaultTab) defaultTab.click();
 }
 
 // 3. Tải trạng thái kết nối CSDL
@@ -210,7 +392,7 @@ async function loadRoutes() {
       container.appendChild(card);
     });
 
-    // Điền dữ liệu vào form Quản trị sửa Tuyến (Admin SV1)
+    // Điền dữ liệu vào form Quản trị sửa Tuyến (Admin)
     const editSelect = document.getElementById('editRouteSelect');
     if (editSelect) {
       editSelect.innerHTML = '<option value="">-- Chọn tuyến cần chỉnh sửa --</option>';
@@ -357,11 +539,17 @@ function setupEventListeners() {
     }
   });
 
-  // Form thêm trạm (Admin CRUD - SV1)
+  // Form thêm trạm (Admin CRUD)
   const addForm = document.getElementById('formAddStation');
   if (addForm) {
     addForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!adminToken) {
+        alert('Yêu cầu quyền Quản trị viên (Admin) để thực hiện thao tác này!');
+        openAdminModal();
+        return;
+      }
+
       const name = document.getElementById('addStationName').value;
       const lat = document.getElementById('addStationLat').value;
       const lng = document.getElementById('addStationLng').value;
@@ -370,11 +558,18 @@ function setupEventListeners() {
       try {
         const res = await fetch('/api/stations', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
           body: JSON.stringify({ name, lat, lng, zone })
         });
         const data = await res.json();
-        alert('Đã thêm trạm thành công vào CSDL Đồ thị!');
+        if (!res.ok) {
+          alert(data.error || 'Lỗi thêm trạm!');
+          return;
+        }
+        alert('Đã thêm trạm thành công vào CSDL Đồ thị Neo4j!');
         addForm.reset();
         loadStations();
         loadDbStatus();
@@ -384,11 +579,17 @@ function setupEventListeners() {
     });
   }
 
-  // Form sửa lịch trình tuyến xe (Admin CRUD - SV1)
+  // Form sửa lịch trình tuyến xe (Admin CRUD)
   const updateRouteForm = document.getElementById('formUpdateRouteSchedule');
   if (updateRouteForm) {
     updateRouteForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!adminToken) {
+        alert('Yêu cầu quyền Quản trị viên (Admin) để cập nhật lịch trình tuyến!');
+        openAdminModal();
+        return;
+      }
+
       const routeId = document.getElementById('editRouteSelect').value;
       const startTime = document.getElementById('editRouteStartTime').value;
       const endTime = document.getElementById('editRouteEndTime').value;
@@ -403,7 +604,10 @@ function setupEventListeners() {
       try {
         const res = await fetch(`/api/routes/${routeId}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          },
           body: JSON.stringify({
             start_time: startTime,
             end_time: endTime,
@@ -412,6 +616,10 @@ function setupEventListeners() {
           })
         });
         const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || 'Lỗi cập nhật lịch trình!');
+          return;
+        }
         alert('Đã cập nhật lịch xuất bến & giãn cách vào CSDL Đồ thị thành công!');
         loadRoutes();
       } catch (err) {
@@ -419,13 +627,70 @@ function setupEventListeners() {
       }
     });
   }
+
+  // Sự kiện bấm chọn các tab so sánh 3 phương án (Nhanh nhất vs Ngắn nhất vs Ít đổi xe)
+  const compareTabBtns = document.querySelectorAll('.compare-tab-btn');
+  compareTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-mode');
+      switchComparisonMode(mode);
+    });
+  });
+
+  // Khi thay đổi radio button tiêu chí tìm kiếm -> tự động cập nhật tab so sánh
+  const modeRadios = document.querySelectorAll('input[name="routingMode"]');
+  modeRadios.forEach(r => {
+    r.addEventListener('change', () => {
+      if (currentComparisonResults) {
+        switchComparisonMode(r.value);
+      }
+    });
+  });
 }
 
-// 7. Thực thi Tìm đường đi ngắn nhất
+// Biến lưu trữ đồng thời cả 3 kết quả tính toán để so sánh trực quan
+let currentComparisonResults = null;
+let currentSelectedMode = 'fastest';
+
+function switchComparisonMode(mode) {
+  if (!currentComparisonResults) return;
+  const resultData = currentComparisonResults[mode];
+  if (!resultData) return;
+
+  currentSelectedMode = mode;
+
+  // Đổi trạng thái active trên các nút tab so sánh
+  document.querySelectorAll('.compare-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+  });
+
+  // Đồng bộ với radio button trong form tìm kiếm
+  const radio = document.querySelector(`input[name="routingMode"][value="${mode}"]`);
+  if (radio) radio.checked = true;
+
+  // Vẽ lại lộ trình trên bản đồ và hiển thị timeline của phương án này
+  displayRoutingResults(resultData);
+}
+
+// Hàm gán nhanh Cặp trạm so sánh mẫu (Demo Pairs cho Thầy/Cô test)
+window.applyDemoPair = function(fromId, toId) {
+  const startSelect = document.getElementById('startStationSelect');
+  const endSelect = document.getElementById('endStationSelect');
+  if (startSelect && endSelect) {
+    startSelect.value = fromId;
+    endSelect.value = toId;
+    handleFindPath();
+  }
+};
+
+// 7. Thực thi Tìm đường đi tối ưu & Tự động so sánh đồng thời 3 phương án
 async function handleFindPath() {
   const fromId = document.getElementById('startStationSelect').value;
   const toId = document.getElementById('endStationSelect').value;
-  const mode = document.querySelector('input[name="routingMode"]:checked').value;
+  const modeRadio = document.querySelector('input[name="routingMode"]:checked');
+  const mode = modeRadio ? modeRadio.value : 'fastest';
+  const trafficMode = document.getElementById('trafficModeSelect') ? document.getElementById('trafficModeSelect').value : 'normal';
+  const passengerType = document.getElementById('passengerTypeSelect') ? document.getElementById('passengerTypeSelect').value : 'student';
 
   if (!fromId || !toId) {
     alert('Vui lòng chọn cả điểm xuất phát (A) và điểm đến (B)!');
@@ -438,14 +703,15 @@ async function handleFindPath() {
   }
 
   const btn = document.getElementById('btnFindPath');
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang duyệt đồ thị...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang duyệt đồ thị & tính 3 phương án...';
   btn.disabled = true;
 
   try {
-    const res = await fetch('/api/find-path', {
+    // Gọi API so sánh đồng thời cả 3 tiêu chí: Nhanh nhất, Ngắn nhất, Ít đổi xe
+    const res = await fetch('/api/find-path/compare', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fromStationId: fromId, toStationId: toId, mode })
+      body: JSON.stringify({ fromStationId: fromId, toStationId: toId, trafficMode, passengerType })
     });
 
     const data = await res.json();
@@ -455,8 +721,25 @@ async function handleFindPath() {
       return;
     }
 
-    // Hiển thị kết quả
-    displayRoutingResults(data);
+    currentComparisonResults = data;
+
+    // Cập nhật thông số tóm tắt lên 3 Tab so sánh
+    const metaFastest = document.getElementById('metaFastest');
+    const metaShortest = document.getElementById('metaShortest');
+    const metaMinTransfer = document.getElementById('metaMinTransfer');
+
+    if (data.fastest && metaFastest) {
+      metaFastest.textContent = `${data.fastest.total_time_mins}p • ${data.fastest.total_distance_km}km`;
+    }
+    if (data.shortest_distance && metaShortest) {
+      metaShortest.textContent = `${data.shortest_distance.total_time_mins}p • ${data.shortest_distance.total_distance_km}km`;
+    }
+    if (data.min_transfers && metaMinTransfer) {
+      metaMinTransfer.textContent = `${data.min_transfers.transfers === 0 ? '0 đổi' : data.min_transfers.transfers + ' lần đổi'}`;
+    }
+
+    // Hiển thị kết quả của chế độ đang chọn
+    switchComparisonMode(mode || 'fastest');
 
   } catch (err) {
     alert('Lỗi kết nối máy chủ: ' + err.message);
@@ -491,13 +774,17 @@ async function displayRoutingResults(data) {
 
   const alertContainerId = 'liveEtaAlertBox';
   let realtimeAlertHtml = `
-    <div class="realtime-alert-card" id="${alertContainerId}" style="cursor: pointer;" title="Nhấp để theo dõi vị trí xe buýt trên bản đồ">
-      <div class="alert-icon"><i class="fa-solid fa-bus-simple fa-bounce"></i></div>
+    <div class="realtime-alert-card" id="${alertContainerId}" title="Nhấp để theo dõi vị trí xe buýt trên bản đồ">
+      <div class="alert-icon"><i class="fa-solid fa-bus-simple"></i></div>
       <div class="alert-text">
-        <strong>THỜI GIAN THỰC: XE BUÝT ĐANG TỚI TRẠM XUẤT PHÁT</strong>
-        <p>Xe Tuyến <b>${firstRouteCode}</b> đang tới trạm <b>${startStation.name}</b> (~${simulatedMinutes} phút ngoài đời)</p>
+        <div class="alert-header-row">
+          <span class="live-pulse-badge"><span class="pulse-dot"></span> THEO DÕI TRỰC TIẾP</span>
+          <span class="alert-click-hint"><i class="fa-solid fa-location-crosshairs"></i> Xem trên bản đồ</span>
+        </div>
+        <div class="alert-title">Xe buýt đang tiếp cận trạm xuất phát</div>
+        <p class="alert-sub">Tuyến <b>${firstRouteCode}</b> &bull; Điểm đón: <strong>${startStation.name}</strong> (~${simulatedMinutes}p ngoài đời)</p>
         <div class="countdown-badge" id="etaCountdownDisplay">
-          <i class="fa-solid fa-hourglass-half"></i> Xe sẽ cập bến sau: ${remainingSeconds} giây
+          <i class="fa-solid fa-hourglass-half"></i> Xe sẽ cập bến sau: <strong>${remainingSeconds} giây</strong>
         </div>
       </div>
     </div>
@@ -506,7 +793,27 @@ async function displayRoutingResults(data) {
   // Điền thẻ tổng quan
   document.getElementById('resTotalTime').textContent = `${data.total_time_mins} phút`;
   document.getElementById('resTotalDist').textContent = `${data.total_distance_km} km`;
-  document.getElementById('resTransfers').textContent = data.transfers === 0 ? 'Đi thẳng (0)' : `${data.transfers} lần đổi`;
+  document.getElementById('resTransfers').textContent = data.transfers === 0 ? 'Đi thẳng (0 đổi)' : `${data.transfers} lần đổi`;
+
+  // Điền giá vé tính toán thực tế (dùng non-breaking space để chữ đ không bao giờ rớt dòng)
+  const fareEl = document.getElementById('resTotalFare');
+  if (fareEl && data.fare_info) {
+    fareEl.textContent = data.fare_info.total_fare > 0 
+      ? `${data.fare_info.total_fare.toLocaleString('vi-VN')}\u00A0đ`
+      : 'Miễn phí';
+  }
+
+  // Cảnh báo kẹt xe giờ cao điểm
+  const rushNoticeEl = document.getElementById('resRushHourNotice');
+  const delayMinsEl = document.getElementById('resDelayMins');
+  if (rushNoticeEl) {
+    if (data.is_rush_hour && data.traffic_delay_mins > 0) {
+      if (delayMinsEl) delayMinsEl.textContent = `${data.traffic_delay_mins}`;
+      rushNoticeEl.style.display = 'flex';
+    } else {
+      rushNoticeEl.style.display = 'none';
+    }
+  }
 
   // Điền câu Cypher
   document.getElementById('cypherCodeBox').textContent = data.cypherQuery;
@@ -755,40 +1062,46 @@ function startJourneyBusOnNeo4jPath(pathPoints, data, initialSeconds, alertConta
       // ĐÚNG SỐ THỜI GIAN ĐÓ XE ĐÃ TỚI TRẠM!
       const alertBox = document.getElementById(alertContainerId);
       if (alertBox) {
-        alertBox.style.border = '2px solid #10B981';
-        alertBox.style.background = '#ECFDF5';
+        alertBox.className = 'realtime-alert-card arrived';
+        alertBox.removeAttribute('style');
+        alertBox.style.cursor = 'pointer';
         alertBox.innerHTML = `
-          <div class="alert-icon" style="background:#10B981; animation: bounce 1s infinite;">
-            <i class="fa-solid fa-bell"></i>
-          </div>
+          <div class="alert-icon arrived"><i class="fa-solid fa-door-open"></i></div>
           <div class="alert-text">
-            <strong style="color:#064E3B; font-size:1rem;">🔔 TING TING! XE BUÝT ĐÃ CẬP BẾN!</strong>
-            <p style="color:#047857; font-weight:700; margin:2px 0;">Xe buýt Tuyến <b>${routeCode}</b> đã tới trạm <b>${startName}</b>. Xin mời bạn lên xe!</p>
-            <div class="countdown-badge" style="background:#059669; color:#FFFFFF;">
-              <i class="fa-solid fa-door-open"></i> Đang mở cửa đón khách tại trạm...
+            <div class="alert-header-row">
+              <span class="live-pulse-badge success"><i class="fa-solid fa-circle-check"></i> ĐÃ CẬP BẾN</span>
+              <span class="alert-click-hint"><i class="fa-solid fa-location-crosshairs"></i> Xem trên bản đồ</span>
+            </div>
+            <div class="alert-title">Xe buýt đã đến trạm đón khách</div>
+            <p class="alert-sub">Tuyến <b>${routeCode}</b> đã cập bến <strong>${startName}</strong>. Xin mời lên xe!</p>
+            <div class="countdown-badge success">
+              <i class="fa-solid fa-door-open"></i> Đang mở cửa đón khách...
             </div>
           </div>
         `;
       }
       if (firstStatusEl) {
-        firstStatusEl.innerHTML = `<span style="color:#059669; font-weight:700;"><i class="fa-solid fa-door-open"></i> 🔔 Xe buýt đã tới trạm - Xin mời lên xe!</span>`;
+        firstStatusEl.innerHTML = `<span style="color:#059669; font-weight:700;"><i class="fa-solid fa-door-open"></i> Xe buýt đã tới trạm - Xin mời lên xe!</span>`;
       }
     } else if (remainingSec <= -4) {
       // Khi xe đón khách xong và lăn bánh: cập nhật thông báo
       const alertBox = document.getElementById(alertContainerId);
       if (alertBox) {
         const intervalNum = typeof routeIntervalMins === 'number' ? routeIntervalMins : (parseInt(routeIntervalMins) || 10);
-        alertBox.style.border = '1.5px solid #059669';
-        alertBox.style.background = '#F0FDF4';
+        alertBox.className = 'realtime-alert-card in-transit';
+        alertBox.removeAttribute('style');
+        alertBox.style.cursor = 'pointer';
         alertBox.innerHTML = `
-          <div class="alert-icon" style="background:#059669;">
-            <i class="fa-solid fa-route"></i>
-          </div>
+          <div class="alert-icon in-transit"><i class="fa-solid fa-route"></i></div>
           <div class="alert-text">
-            <strong style="color:#065F46;">CHUYẾN XE ĐANG LĂN BÁNH TRÊN LỘ TRÌNH</strong>
-            <p style="color:#047857; margin:2px 0;">Xe buýt Tuyến <b>${routeCode}</b> đã đón khách xong và đang di chuyển tới <b>${endName}</b>.</p>
-            <div class="countdown-badge" style="background:#064E3B; color:#A7F3D0;">
-              <i class="fa-solid fa-bus"></i> Tốc độ ổn định &bull; Chuyến sau sau ~${intervalNum}p
+            <div class="alert-header-row">
+              <span class="live-pulse-badge in-transit"><i class="fa-solid fa-bus"></i> ĐANG TRÊN LỘ TRÌNH</span>
+              <span class="alert-click-hint"><i class="fa-solid fa-location-crosshairs"></i> Xem trên bản đồ</span>
+            </div>
+            <div class="alert-title">Chuyến xe đang lăn bánh</div>
+            <p class="alert-sub">Tuyến <b>${routeCode}</b> đang di chuyển về hướng <strong>${endName}</strong></p>
+            <div class="countdown-badge in-transit">
+              <i class="fa-solid fa-gauge-high"></i> Tốc độ ổn định &bull; Chuyến sau sau ~${intervalNum}p
             </div>
           </div>
         `;
@@ -1181,4 +1494,310 @@ function clearLiveBuses() {
     simAnimationFrame = null;
   }
   // Giữ nguyên các xe buýt để xe luôn luôn ở đó chạy mãi
+}
+
+// ==============================================================================
+// TÍNH NĂNG 1: TÌM TRẠM DỪNG GẦN TÔI NHẤT (GPS & SPATIAL GEOLOCATION)
+// ==============================================================================
+let userLocationMarker = null;
+
+function initNearMeFeature() {
+  const btnNearMe = document.getElementById('btnFindNearestStation');
+  const btnClose = document.getElementById('btnCloseNearMeModal');
+
+  if (btnNearMe) {
+    btnNearMe.addEventListener('click', openNearMeModal);
+  }
+  if (btnClose) {
+    btnClose.addEventListener('click', closeNearMeModal);
+  }
+}
+
+function openNearMeModal() {
+  const modal = document.getElementById('nearMeModal');
+  if (modal) modal.classList.add('show');
+
+  const loading = document.getElementById('nearMeLoading');
+  const list = document.getElementById('nearestStationsList');
+  if (loading) loading.style.display = 'block';
+  if (list) list.innerHTML = '';
+
+  // Thử lấy vị trí GPS thực tế của người dùng
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        executeFetchNearest(pos.coords.latitude, pos.coords.longitude);
+      },
+      (err) => {
+        // Fallback tọa độ trung tâm thuận tiện gần ĐH SPKT (Thủ Đức)
+        console.warn('GPS không khả dụng hoặc bị từ chối, dùng vị trí mô phỏng Thủ Đức:', err.message);
+        executeFetchNearest(10.8507, 106.7719, true);
+      },
+      { timeout: 5000 }
+    );
+  } else {
+    executeFetchNearest(10.8507, 106.7719, true);
+  }
+}
+
+function closeNearMeModal() {
+  const modal = document.getElementById('nearMeModal');
+  if (modal) modal.classList.remove('show');
+}
+
+async function executeFetchNearest(lat, lng, isFallback = false) {
+  const loading = document.getElementById('nearMeLoading');
+  const list = document.getElementById('nearestStationsList');
+
+  try {
+    const res = await fetch(`/api/stations/nearest?lat=${lat}&lng=${lng}&limit=4`);
+    const data = await res.json();
+
+    if (loading) loading.style.display = 'none';
+
+    if (!data.nearest_stations || data.nearest_stations.length === 0) {
+      if (list) list.innerHTML = '<p class="text-muted text-center p-3">Không tìm thấy trạm xe buýt nào quanh tọa độ này.</p>';
+      return;
+    }
+
+    // Hiển thị marker vị trí người dùng trên bản đồ
+    if (userLocationMarker) {
+      map.removeLayer(userLocationMarker);
+    }
+    const userIcon = L.divIcon({
+      className: 'user-gps-marker',
+      html: '<div class="user-pulse-circle"><i class="fa-solid fa-person-walking"></i></div>',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+    userLocationMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
+    userLocationMarker.bindPopup('<b>Vị trí của bạn</b><br>' + (isFallback ? '(Vị trí mô phỏng: ĐH SPKT Thủ Đức)' : '(GPS thực tế)')).openPopup();
+    map.setView([lat, lng], 15);
+
+    let html = '';
+    if (isFallback) {
+      html += `
+        <div class="alert-box-notice">
+          <i class="fa-solid fa-circle-info"></i> Đang hiển thị trạm quanh khu vực <strong>ĐH Sư Phạm Kỹ Thuật (Hub Thủ Đức)</strong>.
+        </div>
+      `;
+    }
+
+    data.nearest_stations.forEach((st) => {
+      const routesHtml = (st.routes || []).map(r => `
+        <span class="route-pill" style="background:${r.color || '#059669'};">
+          ${r.code}
+        </span>
+      `).join('');
+
+      html += `
+        <div class="nearest-station-card">
+          <div class="nearest-card-left">
+            <div class="distance-chip">
+              <span class="dist-num">${st.distance_meters}m</span>
+              <span class="walk-time">~${st.walking_time_mins}p đi bộ</span>
+            </div>
+            <div class="nearest-info">
+              <div class="station-name">${st.name}</div>
+              <div class="station-zone"><i class="fa-solid fa-map-pin"></i> ${st.zone || 'TP.HCM'}</div>
+              <div class="serving-routes-row">
+                <span class="label-routes">Tuyến đi qua:</span>
+                ${routesHtml || '<small class="text-muted">Đang cập nhật</small>'}
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-select-nearest" onclick="selectAsStartStation('${st.id}', ${st.lat}, ${st.lng})">
+            <i class="fa-solid fa-check"></i> Chọn trạm này
+          </button>
+        </div>
+      `;
+    });
+
+    if (list) list.innerHTML = html;
+
+  } catch (err) {
+    if (loading) loading.style.display = 'none';
+    if (list) list.innerHTML = `<p class="text-danger text-center p-3">Lỗi tải dữ liệu: ${err.message}</p>`;
+  }
+}
+
+// Hàm chọn trạm gần nhất làm Điểm xuất phát (A)
+window.selectAsStartStation = function(stationId, lat, lng) {
+  const select = document.getElementById('startStationSelect');
+  if (select) {
+    select.value = stationId;
+  }
+  closeNearMeModal();
+
+  // Bay bản đồ tới trạm và mở popup
+  map.flyTo([lat, lng], 16, { animate: true, duration: 1 });
+  if (stationMarkers.has(stationId)) {
+    stationMarkers.get(stationId).openPopup();
+  }
+};
+
+// ==============================================================================
+// TÍNH NĂNG 2: PHÂN TÍCH MẠNG LƯỚI ĐỒ THỊ NEO4J (GRAPH ANALYTICS & CENTRALITY)
+// ==============================================================================
+function initGraphAnalyticsFeature() {
+  const btnAnalytics = document.getElementById('btnOpenAnalytics');
+  const btnClose = document.getElementById('btnCloseAnalyticsModal');
+
+  if (btnAnalytics) {
+    btnAnalytics.addEventListener('click', openAnalyticsModal);
+  }
+  if (btnClose) {
+    btnClose.addEventListener('click', closeAnalyticsModal);
+  }
+}
+
+function openAnalyticsModal() {
+  const modal = document.getElementById('graphAnalyticsModal');
+  if (modal) modal.classList.add('show');
+  loadGraphAnalyticsData();
+}
+
+function closeAnalyticsModal() {
+  const modal = document.getElementById('graphAnalyticsModal');
+  if (modal) modal.classList.remove('show');
+}
+
+async function loadGraphAnalyticsData() {
+  const content = document.getElementById('analyticsModalContent');
+  if (!content) return;
+
+  content.innerHTML = `
+    <div style="text-align: center; padding: 30px;">
+      <i class="fa-solid fa-spinner fa-spin text-primary fa-2x"></i>
+      <p class="mt-2 text-muted">Đang truy vấn độ phân nhánh và Degree Centrality từ Neo4j...</p>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/api/graph/analytics');
+    const data = await res.json();
+
+    const summary = data.network_summary || {};
+    const hubs = data.top_hubs || [];
+    const routes = data.top_routes || [];
+    const cyphers = data.cypher_templates || [];
+
+    let hubsTableRows = hubs.map((h, i) => `
+      <tr>
+        <td class="text-center font-weight-bold">#${i + 1}</td>
+        <td><strong>${h.name}</strong></td>
+        <td><span class="badge-zone">${h.zone || 'TP.HCM'}</span></td>
+        <td class="text-center"><span class="badge-count-routes">${h.route_count} tuyến</span></td>
+        <td class="text-center"><strong class="text-primary">${h.connections}</strong></td>
+      </tr>
+    `).join('');
+
+    let routesTableRows = routes.map((r, i) => `
+      <tr>
+        <td class="text-center font-weight-bold">#${i + 1}</td>
+        <td>
+          <span class="route-pill" style="background:${r.color};">${r.code}</span>
+          <span class="ms-1 font-weight-bold">${r.name}</span>
+        </td>
+        <td class="text-center"><strong>${r.station_count} trạm</strong></td>
+      </tr>
+    `).join('');
+
+    let cypherBoxesHtml = cyphers.map(c => `
+      <div class="cypher-card-item">
+        <div class="cypher-title"><i class="fa-solid fa-terminal"></i> ${c.title}</div>
+        <pre class="cypher-pre"><code>${c.cypher}</code></pre>
+      </div>
+    `).join('');
+
+    content.innerHTML = `
+      <!-- 4 THẺ SỐ LIỆU ĐỊNH MỨC MẠNG LƯỚI -->
+      <div class="analytics-metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon bg-emerald"><i class="fa-solid fa-map-pin"></i></div>
+          <div class="metric-body">
+            <span class="metric-label">Tổng trạm (:Station)</span>
+            <span class="metric-value">${summary.total_stations || 65}</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon bg-blue"><i class="fa-solid fa-bus"></i></div>
+          <div class="metric-body">
+            <span class="metric-label">Tuyến xe (:BusRoute)</span>
+            <span class="metric-value">${summary.total_routes || 8}</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon bg-orange"><i class="fa-solid fa-route"></i></div>
+          <div class="metric-body">
+            <span class="metric-label">Liên kết [:CONNECTS_TO]</span>
+            <span class="metric-value">${summary.total_edges || 178}</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon bg-purple"><i class="fa-solid fa-share-nodes"></i></div>
+          <div class="metric-body">
+            <span class="metric-label">Bậc đồ thị trung bình</span>
+            <span class="metric-value">${summary.avg_connections_per_station || 2.7}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-row mt-3">
+        <!-- BẢNG 1: TOP TRẠM HUYẾT MẠCH (DEGREE CENTRALITY) -->
+        <div class="analytics-col">
+          <div class="analytics-panel">
+            <h5><i class="fa-solid fa-crown text-warning"></i> Top Trạm Trung Chuyển Lớn Nhất (Degree Centrality)</h5>
+            <p class="panel-sub">Trạm có nhiều tuyến giao cắt nhất - Vai trò cầu nối trong đồ thị</p>
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">#</th>
+                  <th>Tên Trạm</th>
+                  <th>Khu vực</th>
+                  <th style="text-align: center;">Tuyến qua</th>
+                  <th style="text-align: center;">Bậc (Degree)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${hubsTableRows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BẢNG 2: TUYẾN XE CÓ ĐỘ PHỦ RỘNG NHẤT -->
+        <div class="analytics-col">
+          <div class="analytics-panel">
+            <h5><i class="fa-solid fa-network-wired text-primary"></i> Tuyến Xe Có Số Trạm Lớn Nhất</h5>
+            <p class="panel-sub">Tuyến trục chính kết nối các quận trọng điểm</p>
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">#</th>
+                  <th>Tuyến Xe Buýt</th>
+                  <th style="text-align: center;">Số trạm dừng</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${routesTableRows}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CÁC CÂU LỆNH CYPHER MẪU ĐỂ BÁO CÁO -->
+      <div class="analytics-panel mt-3">
+        <h5><i class="fa-solid fa-code text-success"></i> Câu Truy Vấn Cypher Thực Tế (Dành Cho Báo Cáo Đồ Án)</h5>
+        <p class="panel-sub">Có thể copy chạy trực tiếp trên Neo4j Browser để minh chứng kết quả</p>
+        <div class="cypher-grid">
+          ${cypherBoxesHtml}
+        </div>
+      </div>
+    `;
+
+  } catch (err) {
+    content.innerHTML = `<p class="text-danger text-center p-3">Lỗi tải phân tích: ${err.message}</p>`;
+  }
 }
