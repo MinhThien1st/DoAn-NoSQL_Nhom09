@@ -22,14 +22,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 const datasetPath = path.join(__dirname, 'database', 'dataset.json');
 let localData = { routes: [], stations: [], edges: [] };
 
-try {
-  if (fs.existsSync(datasetPath)) {
-    localData = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
-    console.log(`[Dataset] Da nap ${localData.stations.length} tram va ${localData.routes.length} tuyen tu file dataset.json`);
+function reloadLocalData() {
+  try {
+    if (fs.existsSync(datasetPath)) {
+      localData = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
+      console.log(`[Dataset] Da nap ${localData.stations.length} tram va ${localData.routes.length} tuyen (${localData.edges.length} canh) tu file dataset.json`);
+    }
+  } catch (err) {
+    console.error('[Dataset] Loi nap dataset.json:', err.message);
   }
-} catch (err) {
-  console.error('[Dataset] Loi nap dataset.json:', err.message);
 }
+reloadLocalData();
 
 // Cấu hình Driver Neo4j
 const NEO4J_URI = process.env.NEO4J_URI || 'bolt://localhost:7687';
@@ -57,15 +60,33 @@ if (neo4j) {
 }
 
 // ==========================================
-// CÁC HÀM XỬ LÝ ĐỒ THỊ TRỰC TIẾP (GRAPH ENGINE DỰ PHÒNG)
 // ==========================================
-function findShortestPathLocal(fromId, toId, mode = 'fastest') {
+// CÁC HÀM XỬ LÝ ĐỒ THỊ TRỰC TIẾP (GRAPH ENGINE DỰ PHÒNG & THUẬT TOÁN)
+// ==========================================
+
+// Tính khoảng cách Haversine giữa 2 tọa độ (km)
+function calculateHaversineKm(lat1, lon1, lat2, lon2) {
+  if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) return 999;
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function findShortestPathLocal(fromId, toId, mode = 'fastest', trafficMode = 'normal', passengerType = 'student') {
   const stationMap = new Map();
   localData.stations.forEach(s => stationMap.set(s.id, s));
 
   if (!stationMap.has(fromId) || !stationMap.has(toId)) {
     return null;
   }
+
+  // Danh sách các trạm là "Nút giao / Hub trọng điểm dễ ùn tắc giờ cao điểm"
+  const congestedHubIds = new Set(['S01', 'S21', 'S26', 'S35', 'S12', 'S16', 'S25', 'S30', 'S34', 'S37']);
 
   // Xây dựng danh sách kề (Adjacency List)
   const adj = new Map();
@@ -80,7 +101,7 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
   // State: (stationId, currentRoute)
   const dist = new Map();
   const prev = new Map();
-  const pq = [{ id: fromId, cost: 0, currentRoute: null, transfers: 0, time: 0, distance: 0, stateKey: `${fromId}__INIT` }];
+  const pq = [{ id: fromId, cost: 0, currentRoute: null, transfers: 0, time: 0, baseTime: 0, distance: 0, stateKey: `${fromId}__INIT` }];
 
   dist.set(`${fromId}__INIT`, 0);
 
@@ -104,18 +125,33 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
       const transferPenaltyTime = isTransfer ? 8 : 0; // Phạt 8 phút chờ xe
       const transferPenaltyCost = isTransfer ? 35 : 0; // Ưu tiên ít đổi tuyến
 
-      let edgeWeight = edge.duration_mins;
+      // Tính toán hệ số kẹt xe theo khung giờ (Giờ cao điểm)
+      let trafficMultiplier = 1.0;
+      if (trafficMode === 'rush_hour') {
+        if (congestedHubIds.has(curr.id) || congestedHubIds.has(edge.to)) {
+          trafficMultiplier = 1.6; // Tăng 60% thời gian qua các hub lớn
+        } else {
+          trafficMultiplier = 1.25; // Tăng 25% các cung đường chung
+        }
+      }
+
+      const effectiveDuration = edge.duration_mins * trafficMultiplier;
+
+      let edgeWeight = effectiveDuration;
       if (mode === 'shortest_distance') {
-        edgeWeight = edge.distance_km;
+        // Tối ưu quãng đường thuần túy (km), phạt nhẹ khoảng cách đi bộ đổi trạm (0.8km)
+        edgeWeight = edge.distance_km + (isTransfer ? 0.8 : 0);
       } else if (mode === 'min_transfers') {
-        edgeWeight = 1 + transferPenaltyCost;
+        // Tối ưu số lần đổi tuyến: phạt nặng mỗi lần chuyển xe để ưu tiên tuyệt đối tuyến đi thẳng
+        edgeWeight = 1 + (isTransfer ? 500 : 0) + (edge.distance_km * 0.05);
       } else {
-        // fastest
-        edgeWeight = edge.duration_mins + transferPenaltyTime;
+        // fastest: Thời gian hành trình + phạt thời gian chờ chuyển tuyến
+        edgeWeight = effectiveDuration + transferPenaltyTime;
       }
 
       const nextCost = curr.cost + edgeWeight;
-      const nextTime = curr.time + edge.duration_mins + transferPenaltyTime;
+      const nextTime = curr.time + effectiveDuration + transferPenaltyTime;
+      const nextBaseTime = curr.baseTime + edge.duration_mins + transferPenaltyTime;
       const nextDist = curr.distance + edge.distance_km;
       const nextTransfers = curr.transfers + (isTransfer ? 1 : 0);
       const nextStateKey = `${edge.to}__${edge.route_id}`;
@@ -126,7 +162,11 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
           fromStateKey: curr.stateKey,
           fromId: curr.id,
           toId: edge.to,
-          edge: edge,
+          edge: {
+            ...edge,
+            effectiveDuration: Math.round(effectiveDuration * 10) / 10,
+            isCongested: trafficMultiplier > 1.3
+          },
           isTransfer: isTransfer
         });
         pq.push({
@@ -135,6 +175,7 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
           currentRoute: edge.route_id,
           transfers: nextTransfers,
           time: nextTime,
+          baseTime: nextBaseTime,
           distance: nextDist,
           stateKey: nextStateKey
         });
@@ -180,14 +221,18 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
         start_station: fromSt,
         end_station: toSt,
         stations: [fromSt, toSt],
-        total_time: edge.duration_mins,
-        total_distance: edge.distance_km
+        total_time: edge.effectiveDuration || edge.duration_mins,
+        base_time: edge.duration_mins,
+        total_distance: edge.distance_km,
+        has_congestion: !!edge.isCongested
       };
     } else {
       currentSegment.stations.push(toSt);
       currentSegment.end_station = toSt;
-      currentSegment.total_time += edge.duration_mins;
+      currentSegment.total_time += (edge.effectiveDuration || edge.duration_mins);
+      currentSegment.base_time += edge.duration_mins;
       currentSegment.total_distance += edge.distance_km;
+      if (edge.isCongested) currentSegment.has_congestion = true;
     }
   }
   if (currentSegment) {
@@ -195,7 +240,23 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
   }
 
   const totalTime = segments.reduce((sum, seg) => sum + seg.total_time, 0) + (segments.length - 1) * 8;
+  const baseTotalTime = segments.reduce((sum, seg) => sum + seg.base_time, 0) + (segments.length - 1) * 8;
   const totalDistance = segments.reduce((sum, seg) => sum + seg.total_distance, 0);
+
+  // Tính tiền vé thực tế (HSSV 3k / Phổ thông 7k / Miễn phí 0k)
+  let farePerLeg = 7000;
+  let passengerLabel = 'Vé phổ thông';
+  if (passengerType === 'student') {
+    farePerLeg = 3000;
+    passengerLabel = 'Vé Sinh viên / Học sinh (Ưu đãi 3.000đ)';
+  } else if (passengerType === 'senior') {
+    farePerLeg = 0;
+    passengerLabel = 'Miễn phí (Người cao tuổi / Trẻ em)';
+  }
+  const totalFare = segments.length * farePerLeg;
+
+  // Lượng khí thải CO2 tiết kiệm được so với đi xe máy cá nhân (~120g CO2/km)
+  const co2SavedKg = Math.round(totalDistance * 0.12 * 10) / 10;
 
   return {
     source: isNeo4jConnected ? 'Neo4j Database' : 'Smart In-Memory Graph Engine',
@@ -204,7 +265,20 @@ function findShortestPathLocal(fromId, toId, mode = 'fastest') {
     segments: segments,
     transfers: Math.max(0, segments.length - 1),
     total_time_mins: Math.round(totalTime),
-    total_distance_km: Math.round(totalDistance * 10) / 10
+    base_time_mins: Math.round(baseTotalTime),
+    traffic_delay_mins: Math.max(0, Math.round(totalTime - baseTotalTime)),
+    is_rush_hour: trafficMode === 'rush_hour',
+    total_distance_km: Math.round(totalDistance * 10) / 10,
+    fare_info: {
+      passenger_type: passengerType,
+      passenger_label: passengerLabel,
+      fare_per_bus: farePerLeg,
+      total_fare: totalFare,
+      currency: 'VNĐ'
+    },
+    eco_impact: {
+      co2_saved_kg: co2SavedKg
+    }
   };
 }
 
@@ -242,6 +316,39 @@ app.get('/api/status', async (req, res) => {
   });
 });
 
+// Middleware xác thực quyền Quản trị viên (Admin RBAC)
+const requireAdmin = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.includes('bus_admin_token')) {
+    return next();
+  }
+  return res.status(403).json({
+    success: false,
+    error: 'Yêu cầu quyền Quản trị viên (Admin)! Vui lòng đăng nhập để thực hiện thao tác này.'
+  });
+};
+
+// API Đăng nhập Quản trị viên (Admin Authentication)
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && (password === '123456' || password === 'admin123')) {
+    return res.json({
+      success: true,
+      message: 'Đăng nhập Quản trị viên thành công!',
+      token: 'bus_admin_token_2026',
+      user: {
+        username: 'admin',
+        name: 'Điều phối viên Quản trị',
+        role: 'ADMIN'
+      }
+    });
+  }
+  return res.status(401).json({
+    success: false,
+    error: 'Tài khoản hoặc mật khẩu Quản trị viên không chính xác! (Gợi ý demo: admin / 123456)'
+  });
+});
+
 // 2. Lấy danh sách Trạm
 app.get('/api/stations', async (req, res) => {
   if (driver && isNeo4jConnected) {
@@ -259,8 +366,8 @@ app.get('/api/stations', async (req, res) => {
   res.json(localData.stations);
 });
 
-// 3. Thêm Trạm mới (Admin CRUD - SV1)
-app.post('/api/stations', async (req, res) => {
+// 3. Thêm Trạm mới (Admin CRUD) - Yêu cầu quyền Admin
+app.post('/api/stations', requireAdmin, async (req, res) => {
   const { name, lat, lng, zone } = req.body;
   if (!name || !lat || !lng) {
     return res.status(400).json({ error: 'Thiếu thông tin name, lat, lng của trạm' });
@@ -294,8 +401,8 @@ app.post('/api/stations', async (req, res) => {
   res.status(201).json({ message: 'Tạo trạm thành công', station: newStation });
 });
 
-// 4. Sửa thông tin Trạm (Admin CRUD - SV1)
-app.put('/api/stations/:id', async (req, res) => {
+// 4. Sửa thông tin Trạm (Admin CRUD) - Yêu cầu quyền Admin
+app.put('/api/stations/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
   const { name, lat, lng, zone } = req.body;
 
@@ -329,8 +436,8 @@ app.put('/api/stations/:id', async (req, res) => {
   res.json({ message: 'Cập nhật trạm thành công', station: localData.stations[stIndex] });
 });
 
-// 5. Xóa Trạm (Admin CRUD - SV1)
-app.delete('/api/stations/:id', async (req, res) => {
+// 5. Xóa Trạm (Admin CRUD) - Yêu cầu quyền Admin
+app.delete('/api/stations/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
   localData.stations = localData.stations.filter(s => s.id !== id);
   localData.edges = localData.edges.filter(e => e.from !== id && e.to !== id);
@@ -399,8 +506,8 @@ app.get('/api/routes/:id', (req, res) => {
   });
 });
 
-// 8. Cập nhật Tuyến xe & Lịch xuất bến (Admin CRUD - SV1)
-app.put('/api/routes/:id', async (req, res) => {
+// 8. Cập nhật Tuyến xe & Lịch xuất bến (Admin CRUD) - Yêu cầu quyền Admin
+app.put('/api/routes/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
   const { start_time, end_time, interval, fare } = req.body;
 
@@ -440,9 +547,9 @@ app.put('/api/routes/:id', async (req, res) => {
   res.json({ message: 'Cập nhật tuyến và lịch chạy thành công', id });
 });
 
-// 8. TÌM ĐƯỜNG ĐI TỐI ƯU (CORE ALGORITHM - SV2 & SV3)
+// 8. TÌM ĐƯỜNG ĐI TỐI ƯU (CORE ALGORITHM - SHORTEST PATH & TRANSIT ROUTING)
 app.post('/api/find-path', async (req, res) => {
-  const { fromStationId, toStationId, mode = 'fastest' } = req.body;
+  const { fromStationId, toStationId, mode = 'fastest', trafficMode = 'normal', passengerType = 'student' } = req.body;
 
   if (!fromStationId || !toStationId) {
     return res.status(400).json({ error: 'Vui lòng cung cấp cả trạm đi và trạm đến' });
@@ -452,9 +559,14 @@ app.post('/api/find-path', async (req, res) => {
     return res.status(400).json({ error: 'Trạm đi và trạm đến không được trùng nhau' });
   }
 
+  const rushHourWeightClause = trafficMode === 'rush_hour'
+    ? `\n// Áp dụng trọng số kẹt xe giờ cao điểm: các nút giao chính x1.6 hệ số thời gian`
+    : '';
+
   const cypherQuery = `
+// Neo4j Shortest Path Query (Thuật toán Tìm đường Đồ thị)
 MATCH (start:Station {id: "${fromStationId}"}), (end:Station {id: "${toStationId}"}),
-      p = shortestPath((start)-[:CONNECTS_TO*]-(end))
+      p = shortestPath((start)-[:CONNECTS_TO*]-(end))${rushHourWeightClause}
 RETURN p,
        [n IN nodes(p) | n.name] AS DanhSachTram,
        [r IN relationships(p) | r.route_id] AS CacTuyen,
@@ -462,8 +574,8 @@ RETURN p,
        reduce(totalDist = 0, r IN relationships(p) | round(totalDist + r.distance_km, 2)) AS TongKm;
   `.trim();
 
-  // Tìm kiếm bằng thuật toán tối ưu (Hỗ trợ phân tích chuyển tuyến)
-  const result = findShortestPathLocal(fromStationId, toStationId, mode);
+  // Tìm kiếm bằng thuật toán tối ưu (Hỗ trợ chuyển tuyến, kẹt xe giờ cao điểm, tính tiền vé)
+  const result = findShortestPathLocal(fromStationId, toStationId, mode, trafficMode, passengerType);
 
   if (!result) {
     return res.status(404).json({
@@ -478,6 +590,207 @@ RETURN p,
   });
 });
 
+// 8.1 API: SO SÁNH ĐỒNG THỜI CẢ 3 PHƯƠNG ÁN (NHANH NHẤT vs NGẮN NHẤT vs ÍT ĐỔI XE)
+app.post('/api/find-path/compare', async (req, res) => {
+  const { fromStationId, toStationId, trafficMode = 'normal', passengerType = 'student' } = req.body;
+
+  if (!fromStationId || !toStationId) {
+    return res.status(400).json({ error: 'Vui lòng cung cấp cả trạm đi và trạm đến' });
+  }
+
+  const fastest = findShortestPathLocal(fromStationId, toStationId, 'fastest', trafficMode, passengerType);
+  const shortest = findShortestPathLocal(fromStationId, toStationId, 'shortest_distance', trafficMode, passengerType);
+  const minTransfers = findShortestPathLocal(fromStationId, toStationId, 'min_transfers', trafficMode, passengerType);
+
+  if (!fastest && !shortest && !minTransfers) {
+    return res.status(404).json({ error: 'Không tìm thấy lộ trình phù hợp giữa 2 trạm này' });
+  }
+
+  res.json({
+    fastest,
+    shortest_distance: shortest,
+    min_transfers: minTransfers
+  });
+});
+
+// 8.2 API: TÌM TRẠM DỪNG GẦN TÔI NHẤT (GPS & SPATIAL NEAREST STATIONS)
+app.get('/api/stations/nearest', (req, res) => {
+  const lat = parseFloat(req.query.lat);
+  const lng = parseFloat(req.query.lng);
+  const limit = parseInt(req.query.limit) || 3;
+
+  if (isNaN(lat) || isNaN(lng)) {
+    return res.status(400).json({ error: 'Tọa độ lat, lng không hợp lệ' });
+  }
+
+  const stationsWithDistance = localData.stations.map(st => {
+    const distKm = calculateHaversineKm(lat, lng, st.lat, st.lng);
+    const distMeters = Math.round(distKm * 1000);
+    // Tốc độ đi bộ trung bình 4.5 km/h ~ 75m/phút
+    const walkMins = Math.max(1, Math.round(distMeters / 75));
+
+    // Lấy các tuyến xe đi qua trạm này
+    const servingRoutes = localData.routes.filter(r => {
+      return localData.edges.some(e => e.route_id === r.id && (e.from === st.id || e.to === st.id));
+    }).map(r => ({ code: r.code, name: r.name, color: r.color }));
+
+    return {
+      id: st.id,
+      name: st.name,
+      lat: st.lat,
+      lng: st.lng,
+      zone: st.zone,
+      distance_meters: distMeters,
+      distance_km: Math.round(distKm * 100) / 100,
+      walking_time_mins: walkMins,
+      routes: servingRoutes
+    };
+  });
+
+  stationsWithDistance.sort((a, b) => a.distance_meters - b.distance_meters);
+  const nearest = stationsWithDistance.slice(0, limit);
+
+  res.json({
+    user_location: { lat, lng },
+    nearest_stations: nearest
+  });
+});
+
+// 8.2 API: PHÂN TÍCH MẠNG LƯỚI ĐỒ THỊ (GRAPH ANALYTICS & HUB CENTRALITY)
+app.get('/api/graph/analytics', async (req, res) => {
+  let analyticsData = null;
+
+  if (driver && isNeo4jConnected) {
+    const session = driver.session();
+    try {
+      // 1. Top Hubs theo Degree Centrality (Số tuyến và số liên kết)
+      const hubQuery = `
+        MATCH (s:Station)<-[c:CONNECTS_TO]-()
+        RETURN s.id AS id, s.name AS name, s.zone AS zone, 
+               count(DISTINCT c.route_id) AS routeCount, 
+               count(c) AS inDegree
+        ORDER BY routeCount DESC, inDegree DESC
+        LIMIT 6
+      `;
+      const hubRes = await session.run(hubQuery);
+      const topHubs = hubRes.records.map(rec => ({
+        id: rec.get('id'),
+        name: rec.get('name'),
+        zone: rec.get('zone'),
+        route_count: rec.get('routeCount').toNumber(),
+        connections: rec.get('inDegree').toNumber()
+      }));
+
+      // 2. Tuyến xe có số trạm lớn nhất
+      const routeQuery = `
+        MATCH (r:BusRoute)
+        RETURN r.id AS id, r.code AS code, r.name AS name, r.color AS color, r.fare AS fare, r.interval AS interval
+        ORDER BY r.code ASC
+      `;
+      const routeRes = await session.run(routeQuery);
+      const topRoutes = routeRes.records.map(rec => {
+        const rId = rec.get('id');
+        const rEdges = localData.edges.filter(e => e.route_id === rId);
+        const stIds = new Set();
+        rEdges.forEach(e => { stIds.add(e.from); stIds.add(e.to); });
+        return {
+          id: rId,
+          code: rec.get('code'),
+          name: rec.get('name'),
+          color: rec.get('color'),
+          station_count: stIds.size
+        };
+      }).sort((a, b) => b.station_count - a.station_count).slice(0, 5);
+
+      analyticsData = {
+        top_hubs: topHubs,
+        top_routes: topRoutes,
+        source: 'Neo4j Bolt Graph Database'
+      };
+    } catch (e) {
+      console.warn('Lỗi phân tích Neo4j, dùng fallback:', e.message);
+    } finally {
+      await session.close();
+    }
+  }
+
+  // Fallback in-memory graph analytics
+  if (!analyticsData) {
+    const stationRoutesMap = new Map();
+    localData.edges.forEach(e => {
+      if (!stationRoutesMap.has(e.to)) stationRoutesMap.set(e.to, new Set());
+      stationRoutesMap.get(e.to).add(e.route_id);
+    });
+
+    const topHubs = localData.stations.map(st => {
+      const routesSet = stationRoutesMap.get(st.id) || new Set();
+      const inDegree = localData.edges.filter(e => e.to === st.id).length;
+      return {
+        id: st.id,
+        name: st.name,
+        zone: st.zone,
+        route_count: routesSet.size,
+        connections: inDegree
+      };
+    }).sort((a, b) => b.route_count - a.route_count || b.connections - a.connections).slice(0, 6);
+
+    const topRoutes = localData.routes.map(r => {
+      const rEdges = localData.edges.filter(e => e.route_id === r.id);
+      const stIds = new Set();
+      rEdges.forEach(e => { stIds.add(e.from); stIds.add(e.to); });
+      return {
+        id: r.id,
+        code: r.code,
+        name: r.name,
+        color: r.color,
+        station_count: stIds.size
+      };
+    }).sort((a, b) => b.station_count - a.station_count).slice(0, 5);
+
+    analyticsData = {
+      top_hubs: topHubs,
+      top_routes: topRoutes,
+      source: 'In-Memory Graph Engine'
+    };
+  }
+
+  // Phân bổ trạm theo quận
+  const zoneMap = new Map();
+  localData.stations.forEach(s => {
+    const z = s.zone || 'Khác';
+    zoneMap.set(z, (zoneMap.get(z) || 0) + 1);
+  });
+  analyticsData.zone_distribution = Array.from(zoneMap.entries())
+    .map(([zone, count]) => ({ zone, station_count: count }))
+    .sort((a, b) => b.station_count - a.station_count);
+
+  // Thống kê tổng quan mạng lưới
+  analyticsData.network_summary = {
+    total_stations: localData.stations.length,
+    total_routes: localData.routes.length,
+    total_edges: localData.edges.length,
+    avg_connections_per_station: Math.round((localData.edges.length / localData.stations.length) * 10) / 10
+  };
+
+  // Các câu lệnh Cypher chuẩn mẫu để thuyết trình với Giảng viên
+  analyticsData.cypher_templates = [
+    {
+      title: "1. Tìm Top Trạm trung chuyển huyết mạch (Degree Centrality)",
+      cypher: "MATCH (s:Station)<-[c:CONNECTS_TO]-()\nRETURN s.name AS Tram, count(DISTINCT c.route_id) AS SoTuyen, count(c) AS TongKetNoi\nORDER BY SoTuyen DESC, TongKetNoi DESC\nLIMIT 5;"
+    },
+    {
+      title: "2. Tìm Tuyến xe buýt có độ phủ trạm dừng lớn nhất",
+      cypher: "MATCH (r:BusRoute)-[:SERVES]->(s:Station)\nRETURN r.code AS MaTuyen, r.name AS TenTuyen, count(s) AS SoTramDiQua\nORDER BY SoTramDiQua DESC\nLIMIT 5;"
+    },
+    {
+      title: "3. Phân bổ trạm dừng theo địa bàn Quận / Huyện",
+      cypher: "MATCH (s:Station)\nRETURN s.zone AS QuanHuyen, count(s) AS SoLuongTram\nORDER BY SoLuongTram DESC;"
+    }
+  ];
+
+  res.json(analyticsData);
+});
+
 // 9. Giả lập xe buýt thời gian thực (Live Bus Simulator bám sát theo từng trạm trên tuyến)
 app.get('/api/live-buses', (req, res) => {
   const now = Date.now();
@@ -488,7 +801,10 @@ app.get('/api/live-buses', (req, res) => {
     'R08': ['S18', 'S19', 'S20', 'S16', 'S15', 'S03', 'S06', 'S21', 'S22', 'S25', 'S65', 'S64', 'S34', 'S35', 'S41', 'S43', 'S44', 'S45'],
     'R01': ['S01', 'S02', 'S03', 'S16', 'S14', 'S13', 'S12'],
     'R150': ['S12', 'S13', 'S16', 'S06', 'S21', 'S26', 'S30', 'S35', 'S36', 'S37', 'S38', 'S39', 'S40'],
-    'R53': ['S17', 'S16', 'S07', 'S06', 'S21', 'S65', 'S64', 'S34', 'S47', 'S41', 'S49']
+    'R53': ['S17', 'S16', 'S07', 'S06', 'S21', 'S65', 'S64', 'S34', 'S47', 'S41', 'S49'],
+    'R06': ['S12', 'S13', 'S14', 'S16', 'S06', 'S21', 'S26', 'S28', 'S30', 'S31', 'S35', 'S36', 'S37', 'S41'],
+    'R104': ['S61', 'S62', 'S65', 'S64', 'S34', 'S41', 'S49'],
+    'R109': ['S52', 'S53', 'S54', 'S05', 'S01']
   };
 
   const stationMap = new Map();

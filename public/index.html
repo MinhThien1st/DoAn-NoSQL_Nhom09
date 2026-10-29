@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 
@@ -39,8 +39,25 @@
         <button class="tab-btn" data-tab="tab-routes">
           <i class="fa-solid fa-bus"></i> Tra cứu tuyến
         </button>
-        <button class="tab-btn" data-tab="tab-admin">
-          <i class="fa-solid fa-sliders"></i> Quản trị Admin (SV1)
+        <button class="tab-btn" data-tab="tab-admin" id="tabAdminBtn">
+          <i class="fa-solid fa-sliders"></i> Quản trị Admin
+          <span class="admin-lock-tag" id="adminLockTag"><i class="fa-solid fa-lock"></i></span>
+        </button>
+      </div>
+
+      <!-- Nút Phân tích Đồ thị Neo4j -->
+      <div class="analytics-nav me-2">
+        <button class="btn-analytics-nav" id="btnOpenAnalytics" title="Xem phân tích mạng lưới đồ thị Neo4j & Hub Centrality">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Phân tích Đồ thị</span>
+        </button>
+      </div>
+
+      <!-- Nút tài khoản Admin -->
+      <div class="admin-user-nav">
+        <button class="btn-admin-auth" id="btnAdminAuth" title="Đăng nhập tài khoản Quản trị viên">
+          <i class="fa-solid fa-user-shield"></i>
+          <span id="adminAuthLabel">Đăng nhập Admin</span>
         </button>
       </div>
     </div>
@@ -61,7 +78,12 @@
 
         <div class="search-form card">
           <div class="input-group">
-            <label><i class="fa-solid fa-circle-dot text-success"></i> Điểm xuất phát (A):</label>
+            <div class="input-header-row">
+              <label><i class="fa-solid fa-circle-dot text-success"></i> Điểm xuất phát (A):</label>
+              <button type="button" class="btn-near-me" id="btnFindNearestStation" title="Định vị GPS tìm các trạm gần vị trí của bạn">
+                <i class="fa-solid fa-location-crosshairs"></i> Gần tôi
+              </button>
+            </div>
             <div class="input-wrapper">
               <select id="startStationSelect" class="form-control select-station">
                 <option value="">-- Chọn hoặc click trên bản đồ --</option>
@@ -84,9 +106,28 @@
             </div>
           </div>
 
+          <!-- BỘ LỌC THỰC TẾ: KHUNG GIỜ KẸT XE & ĐỐI TƯỢNG VÉ -->
+          <div class="realtime-filter-row">
+            <div class="filter-subgroup">
+              <label class="filter-label"><i class="fa-solid fa-traffic-light text-warning"></i> Khung giờ di chuyển:</label>
+              <select id="trafficModeSelect" class="form-control select-compact">
+                <option value="normal">☀️ Giờ thường (Thông thoáng)</option>
+                <option value="rush_hour">🚦 Giờ cao điểm (+50% kẹt xe)</option>
+              </select>
+            </div>
+            <div class="filter-subgroup">
+              <label class="filter-label"><i class="fa-solid fa-id-card text-primary"></i> Đối tượng vé:</label>
+              <select id="passengerTypeSelect" class="form-control select-compact">
+                <option value="student" selected>🎓 Sinh viên (3.000đ)</option>
+                <option value="standard">👤 Phổ thông (7.000đ)</option>
+                <option value="senior">🧓 Miễn phí (0đ)</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Bộ lọc tiêu chí thuật toán -->
           <div class="filter-group">
-            <label class="filter-label">Tiêu chí ưu tiên:</label>
+            <label class="filter-label">Tiêu chí ưu tiên đồ thị:</label>
             <div class="segmented-control">
               <input type="radio" name="routingMode" id="modeFastest" value="fastest" checked>
               <label for="modeFastest"><i class="fa-solid fa-bolt"></i> Nhanh nhất</label>
@@ -102,10 +143,42 @@
           <button class="btn btn-primary btn-block btn-lg" id="btnFindPath">
             <i class="fa-solid fa-magnifying-glass-location"></i> Tìm Lộ Trình Tối Ưu
           </button>
+
+          <!-- GỢI Ý CẶP TRẠM VÀNG ĐỂ BÁO CÁO & SO SÁNH 3 PHƯƠNG ÁN -->
+          <div class="demo-pairs-wrap">
+            <span class="demo-pairs-label"><i class="fa-solid fa-wand-magic-sparkles text-warning"></i> Cặp trạm so sánh mẫu (Thầy/Cô test):</span>
+            <div class="demo-pair-chips">
+              <button type="button" class="btn-pair-chip" onclick="applyDemoPair('S12', 'S41')" title="Chợ Lớn -> ĐH Nông Lâm: Tuyến 06 Đi thẳng vs Nhanh nhất vs Ngắn nhất">
+                Chợ Lớn ➔ ĐH Nông Lâm
+              </button>
+              <button type="button" class="btn-pair-chip" onclick="applyDemoPair('S01', 'S45')" title="Bến Thành -> KTX Khu A: Thấy rõ 3 phương án khác biệt">
+                Bến Thành ➔ KTX Khu A
+              </button>
+              <button type="button" class="btn-pair-chip" onclick="applyDemoPair('S52', 'S37')" title="Sân Bay TSN -> Suối Tiên: Tuyến 109 Express vs Tuyến 08">
+                Sân Bay ➔ Suối Tiên
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Khung kết quả tìm kiếm -->
         <div class="routing-results" id="routingResults" style="display: none;">
+          <!-- 3 TABS SO SÁNH ĐỒNG THỜI 3 TIÊU CHÍ -->
+          <div class="compare-tabs-bar" id="compareTabsBar">
+            <button type="button" class="compare-tab-btn active" data-mode="fastest" id="tabModeFastest">
+              <span class="tab-mode-title"><i class="fa-solid fa-bolt text-warning"></i> Nhanh nhất</span>
+              <span class="tab-mode-meta" id="metaFastest">--p &bull; --km</span>
+            </button>
+            <button type="button" class="compare-tab-btn" data-mode="shortest_distance" id="tabModeShortest">
+              <span class="tab-mode-title"><i class="fa-solid fa-ruler text-info"></i> Ngắn nhất</span>
+              <span class="tab-mode-meta" id="metaShortest">--p &bull; --km</span>
+            </button>
+            <button type="button" class="compare-tab-btn" data-mode="min_transfers" id="tabModeMinTransfer">
+              <span class="tab-mode-title"><i class="fa-solid fa-shuffle text-success"></i> Ít đổi xe</span>
+              <span class="tab-mode-meta" id="metaMinTransfer">-- đổi</span>
+            </button>
+          </div>
+
           <div class="summary-cards">
             <div class="summary-card">
               <div class="icon-wrap bg-blue"><i class="fa-regular fa-clock"></i></div>
@@ -128,6 +201,19 @@
                 <span class="val" id="resTransfers">--</span>
               </div>
             </div>
+            <div class="summary-card">
+              <div class="icon-wrap bg-purple"><i class="fa-solid fa-ticket"></i></div>
+              <div class="info">
+                <span class="label">Giá vé</span>
+                <span class="val" id="resTotalFare">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thông báo giờ cao điểm (nếu có) -->
+          <div class="rush-hour-alert" id="resRushHourNotice" style="display: none;">
+            <i class="fa-solid fa-traffic-light"></i>
+            <span><strong>Cảnh báo kẹt xe giờ cao điểm:</strong> Tuyến đi qua điểm nghẽn giao thông, dự kiến trễ thêm <strong id="resDelayMins">--</strong> phút.</span>
           </div>
 
           <!-- Timeline chi tiết từng chặng -->
@@ -138,7 +224,7 @@
             </div>
           </div>
 
-          <!-- Cypher Inspector (Để SV2/SV3 khoe với giảng viên) -->
+          <!-- Cypher Inspector (Truy vấn đồ thị Neo4j) -->
           <div class="cypher-inspector card">
             <div class="inspector-header" id="toggleCypherCode">
               <span><i class="fa-solid fa-code"></i> Xem câu truy vấn Cypher</span>
@@ -160,85 +246,117 @@
         </div>
       </section>
 
-      <!-- TAB 3: QUẢN TRỊ ADMIN (SV1 - CRUD LEAD) -->
+      <!-- TAB 3: QUẢN TRỊ ADMIN -->
       <section class="tab-content" id="tab-admin">
         <div class="sidebar-header">
           <h2>Quản trị mạng lưới trạm & tuyến</h2>
           <p class="subtitle">Thực hiện thêm mới, cập nhật và quản lý cơ sở dữ liệu đồ thị</p>
         </div>
 
-        <div class="admin-actions card">
-          <h3><i class="fa-solid fa-plus-circle text-primary"></i> Thêm Trạm xe buýt mới</h3>
-          <p class="small text-muted"><i class="fa-solid fa-circle-info"></i> Bạn có thể click chuột trực tiếp lên bản đồ để tự động lấy Tọa độ!</p>
-          <form id="formAddStation">
-            <div class="form-group">
-              <label>Tên trạm dừng:</label>
-              <input type="text" id="addStationName" class="form-control" placeholder="Ví dụ: Trạm ĐH Bách Khoa CS1" required>
-            </div>
-            <div class="row">
-              <div class="col">
-                <label>Vĩ độ (Lat):</label>
-                <input type="number" step="0.0001" id="addStationLat" class="form-control" placeholder="10.7725" required>
-              </div>
-              <div class="col">
-                <label>Kinh độ (Lng):</label>
-                <input type="number" step="0.0001" id="addStationLng" class="form-control" placeholder="106.6980" required>
-              </div>
-            </div>
-            <div class="form-group mt-2">
-              <label>Khu vực / Quận:</label>
-              <input type="text" id="addStationZone" class="form-control" placeholder="Quận 1">
-            </div>
-            <button type="submit" class="btn btn-success btn-block mt-3">
-              <i class="fa-solid fa-floppy-disk"></i> Lưu Trạm vào CSDL Đồ Thị
+        <!-- MÀN HÌNH KHÓA (KHI CHƯA ĐĂNG NHẬP ADMIN) -->
+        <div class="admin-locked-card card" id="adminLockedGuard">
+          <div class="locked-icon-halo">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h3>Yêu cầu Quyền Quản Trị Viên</h3>
+          <p class="locked-desc">
+            Khu vực này dành riêng cho <strong>Điều phối viên (Admin)</strong> để thêm/sửa trạm xe buýt và điều chỉnh lịch trình xuất bến vào CSDL Neo4j.
+          </p>
+          <div class="locked-btn-wrap">
+            <button class="btn btn-primary" id="btnTriggerLoginModal">
+              <i class="fa-solid fa-key me-1"></i> Đăng nhập Quản trị viên
             </button>
-          </form>
+          </div>
+          <div class="locked-hint">
+            <i class="fa-solid fa-circle-info"></i> Hành khách vãng lai chỉ có quyền tra cứu lộ trình.
+          </div>
         </div>
 
-        <!-- CẬP NHẬT TUYẾN & GIỜ XUẤT BẾN (CRUD SV1) -->
-        <div class="admin-actions card mt-3">
-          <h3><i class="fa-solid fa-clock text-primary"></i> Điều chỉnh giờ xuất bến & giãn cách</h3>
-          <p class="small text-muted"><i class="fa-solid fa-circle-info"></i> Cập nhật lịch trình xe chạy vào CSDL Graph Neo4j</p>
-          <form id="formUpdateRouteSchedule">
-            <div class="form-group">
-              <label>Chọn Tuyến xe buýt:</label>
-              <select id="editRouteSelect" class="form-control" required>
-                <option value="">-- Chọn tuyến cần chỉnh sửa --</option>
-              </select>
+        <!-- NỘI DUNG CRUD CHÍNH (CHỈ HIỆN KHI ĐÃ ĐĂNG NHẬP) -->
+        <div id="adminUnlockedArea" style="display: none;">
+          <div class="admin-session-badge">
+            <div class="admin-session-info">
+              <span class="status-indicator online"></span>
+              <span>Đang đăng nhập: <strong>Quản trị viên (Admin)</strong></span>
             </div>
-            <div class="row">
-              <div class="col">
-                <label>Giờ mở bến:</label>
-                <input type="text" id="editRouteStartTime" class="form-control" placeholder="05:00" required>
-              </div>
-              <div class="col">
-                <label>Giờ đóng bến:</label>
-                <input type="text" id="editRouteEndTime" class="form-control" placeholder="21:00" required>
-              </div>
-            </div>
-            <div class="row mt-2">
-              <div class="col">
-                <label>Giãn cách (phút/chuyến):</label>
-                <input type="number" id="editRouteInterval" class="form-control" placeholder="10" required>
-              </div>
-              <div class="col">
-                <label>Giá vé (VNĐ):</label>
-                <input type="number" id="editRouteFare" class="form-control" placeholder="7000" required>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block mt-3">
-              <i class="fa-solid fa-pen-to-square"></i> Cập Nhật Lịch Trình Tuyến
+            <button class="btn-logout-link" id="btnLogoutAdmin" title="Đăng xuất khỏi quyền Admin">
+              <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
             </button>
-          </form>
-        </div>
+          </div>
 
-        <div class="admin-stats card mt-3">
-          <h3><i class="fa-solid fa-chart-pie"></i> Thống kê định mức CSDL</h3>
-          <ul class="stats-list">
-            <li><span>Tổng trạm dừng (:Station):</span> <strong id="adminStatStations">0</strong></li>
-            <li><span>Tổng tuyến xe buýt (:BusRoute):</span> <strong id="adminStatRoutes">0</strong></li>
-            <li><span>Tổng cạnh liên kết [:CONNECTS_TO]:</span> <strong id="adminStatEdges">0</strong></li>
-          </ul>
+          <div class="admin-actions card mt-2">
+            <h3><i class="fa-solid fa-plus-circle text-primary"></i> Thêm Trạm xe buýt mới</h3>
+            <p class="small text-muted"><i class="fa-solid fa-circle-info"></i> Bạn có thể click chuột trực tiếp lên bản đồ để tự động lấy Tọa độ!</p>
+            <form id="formAddStation">
+              <div class="form-group">
+                <label>Tên trạm dừng:</label>
+                <input type="text" id="addStationName" class="form-control" placeholder="Ví dụ: Trạm ĐH Bách Khoa CS1" required>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label>Vĩ độ (Lat):</label>
+                  <input type="number" step="0.0001" id="addStationLat" class="form-control" placeholder="10.7725" required>
+                </div>
+                <div class="col">
+                  <label>Kinh độ (Lng):</label>
+                  <input type="number" step="0.0001" id="addStationLng" class="form-control" placeholder="106.6980" required>
+                </div>
+              </div>
+              <div class="form-group mt-2">
+                <label>Khu vực / Quận:</label>
+                <input type="text" id="addStationZone" class="form-control" placeholder="Quận 1">
+              </div>
+              <button type="submit" class="btn btn-success btn-block mt-3">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu Trạm vào CSDL Đồ Thị
+              </button>
+            </form>
+          </div>
+
+          <!-- CẬP NHẬT TUYẾN & GIỜ XUẤT BẾN -->
+          <div class="admin-actions card mt-3">
+            <h3><i class="fa-solid fa-clock text-primary"></i> Điều chỉnh giờ xuất bến & giãn cách</h3>
+            <p class="small text-muted"><i class="fa-solid fa-circle-info"></i> Cập nhật lịch trình xe chạy vào CSDL Graph Neo4j</p>
+            <form id="formUpdateRouteSchedule">
+              <div class="form-group">
+                <label>Chọn Tuyến xe buýt:</label>
+                <select id="editRouteSelect" class="form-control" required>
+                  <option value="">-- Chọn tuyến cần chỉnh sửa --</option>
+                </select>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label>Giờ mở bến:</label>
+                  <input type="text" id="editRouteStartTime" class="form-control" placeholder="05:00" required>
+                </div>
+                <div class="col">
+                  <label>Giờ đóng bến:</label>
+                  <input type="text" id="editRouteEndTime" class="form-control" placeholder="21:00" required>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col">
+                  <label>Giãn cách (phút/chuyến):</label>
+                  <input type="number" id="editRouteInterval" class="form-control" placeholder="10" required>
+                </div>
+                <div class="col">
+                  <label>Giá vé (VNĐ):</label>
+                  <input type="number" id="editRouteFare" class="form-control" placeholder="7000" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block mt-3">
+                <i class="fa-solid fa-pen-to-square"></i> Cập Nhật Lịch Trình Tuyến
+              </button>
+            </form>
+          </div>
+
+          <div class="admin-stats card mt-3">
+            <h3><i class="fa-solid fa-chart-pie"></i> Thống kê định mức CSDL</h3>
+            <ul class="stats-list">
+              <li><span>Tổng trạm dừng (:Station):</span> <strong id="adminStatStations">0</strong></li>
+              <li><span>Tổng tuyến xe buýt (:BusRoute):</span> <strong id="adminStatRoutes">0</strong></li>
+              <li><span>Tổng cạnh liên kết [:CONNECTS_TO]:</span> <strong id="adminStatEdges">0</strong></li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -261,19 +379,122 @@
 
       <!-- Chú thích bản đồ (Map Legend) -->
       <div class="map-legend">
-        <div class="legend-item"><span class="legend-color" style="background: #1E88E5;"></span> Tuyến 08</div>
-        <div class="legend-item"><span class="legend-color" style="background: #00897B;"></span> Tuyến 19</div>
-        <div class="legend-item"><span class="legend-color" style="background: #3949AB;"></span> Tuyến 150</div>
-        <div class="legend-item"><span class="legend-color" style="background: #E53935;"></span> Tuyến 01</div>
-        <div class="legend-item"><span class="legend-color" style="background: #43A047;"></span> Tuyến 53</div>
+        <div class="legend-item"><span class="legend-color" style="background: #1E88E5;"></span> Tuyến 08 (Q8 - ĐHQG)</div>
+        <div class="legend-item"><span class="legend-color" style="background: #00897B;"></span> Tuyến 19 (B.Thành - ĐHQG)</div>
+        <div class="legend-item"><span class="legend-color" style="background: #0284C7;"></span> Tuyến 06 (Chợ Lớn - N.Lâm)</div>
+        <div class="legend-item"><span class="legend-color" style="background: #D97706;"></span> Tuyến 104 (Vành đai QL1)</div>
+        <div class="legend-item"><span class="legend-color" style="background: #7C3AED;"></span> Tuyến 109 (Express TSN)</div>
+        <div class="legend-item"><span class="legend-color" style="background: #3949AB;"></span> Tuyến 150 (Chợ Lớn - Tân Vạn)</div>
         <div class="legend-item"><span class="legend-dot"></span> Trạm xe buýt</div>
       </div>
     </main>
   </div>
 
+  <!-- MODAL ĐĂNG NHẬP ADMIN (GLASSMORPHISM) -->
+  <div class="modal-overlay" id="adminAuthModal">
+    <div class="modal-dialog-card">
+      <div class="modal-header-custom">
+        <div class="modal-header-title">
+          <div class="modal-icon-badge">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <div>
+            <h4>Xác thực Quản trị viên</h4>
+            <span class="modal-subtitle">Hệ thống Điều phối Xe buýt Neo4j</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btnCloseAdminModal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-custom">
+        <div class="alert-box error" id="adminLoginAlert" style="display: none;"></div>
+
+        <form id="formAdminAuth">
+          <div class="form-group mb-3">
+            <label class="form-label-custom"><i class="fa-solid fa-user"></i> Tài khoản:</label>
+            <input type="text" id="adminUsernameInput" class="form-control" placeholder="Tên đăng nhập" value="admin" required>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label-custom"><i class="fa-solid fa-lock"></i> Mật khẩu:</label>
+            <input type="password" id="adminPasswordInput" class="form-control" placeholder="Mật khẩu" value="123456" required>
+            <small class="hint-demo">Tài khoản demo: <code>admin</code> / <code>123456</code></small>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block py-2 fw-bold" id="btnSubmitLogin">
+            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Đăng nhập Quản trị
+          </button>
+        </form>
+
+        <div class="demo-quick-login">
+          <div class="divider-text"><span>HOẶC DEMO NHANH</span></div>
+          <button type="button" class="btn btn-outline-demo" id="btnQuickDemoAuth">
+            <i class="fa-solid fa-bolt text-warning"></i> Đăng nhập nhanh Admin (1 Click)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 1: GỢI Ý TRẠM XE BUÝT GẦN NHẤT (GPS & SPATIAL) -->
+  <div class="modal-overlay" id="nearMeModal">
+    <div class="modal-dialog-card modal-custom-wide">
+      <div class="modal-header-custom">
+        <div class="modal-header-title">
+          <div class="modal-icon-badge bg-emerald">
+            <i class="fa-solid fa-location-crosshairs"></i>
+          </div>
+          <div>
+            <h4>Các trạm xe buýt gần vị trí của bạn</h4>
+            <span class="modal-subtitle">Định vị GPS & khoảng cách đi bộ thực tế</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btnCloseNearMeModal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body-custom">
+        <div id="nearMeLoading" style="display: none; text-align: center; padding: 20px;">
+          <i class="fa-solid fa-spinner fa-spin text-primary fa-2x"></i>
+          <p class="mt-2 text-muted">Đang quét các trạm xe buýt quanh bạn...</p>
+        </div>
+        <div class="nearest-stations-list" id="nearestStationsList">
+          <!-- Render tự động bởi JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: BÁO CÁO PHÂN TÍCH ĐỒ THỊ NEO4J (GRAPH ANALYTICS & CENTRALITY) -->
+  <div class="modal-overlay" id="graphAnalyticsModal">
+    <div class="modal-dialog-card modal-analytics-large">
+      <div class="modal-header-custom">
+        <div class="modal-header-title">
+          <div class="modal-icon-badge bg-blue">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <div>
+            <h4>Báo Cáo Phân Tích Mạng Lưới Đồ Thị Neo4j</h4>
+            <span class="modal-subtitle">Degree Centrality, Hub Trung Chuyển & Câu lệnh Cypher</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btnCloseAnalyticsModal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body-custom" id="analyticsModalContent">
+        <div style="text-align: center; padding: 30px;">
+          <i class="fa-solid fa-spinner fa-spin text-primary fa-2x"></i>
+          <p class="mt-2 text-muted">Đang truy vấn số liệu đồ thị từ Neo4j...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <!-- Custom JS -->
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=4"></script>
 </body>
 </html>

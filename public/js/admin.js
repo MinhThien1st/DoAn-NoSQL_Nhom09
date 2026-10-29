@@ -1,6 +1,6 @@
 /**
- * [PHẦN JAVASCRIPT GIAO DIỆN ADMIN CỦA SINH VIÊN 1] - BẢN ĐÃ SỬA
- * Đặt vào file public/js/app.js để điều khiển các chức năng quản trị
+ * [PHẦN JAVASCRIPT GIAO DIỆN QUẢN TRỊ ADMIN]
+ * Điều khiển các chức năng quản trị trạm và lịch trình tuyến
  */
 
 // 1. Tải danh sách trạm xe lên bảng Admin

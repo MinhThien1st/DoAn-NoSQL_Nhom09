@@ -1,274 +1,2397 @@
 {
   "routes": [
-    { "id": "R01", "code": "01", "name": "Bến Thành - Bến xe Chợ Lớn", "color": "#E53935", "interval": 10, "start_time": "05:00", "end_time": "21:00", "fare": 7000 },
-    { "id": "R03", "code": "03", "name": "Bến Thành - Thạnh Lộc", "color": "#8E24AA", "interval": 12, "start_time": "05:15", "end_time": "20:45", "fare": 7000 },
-    { "id": "R08", "code": "08", "name": "Bến xe Quận 8 - ĐH Quốc Gia", "color": "#1E88E5", "interval": 8, "start_time": "04:40", "end_time": "20:30", "fare": 7000 },
-    { "id": "R19", "code": "19", "name": "Bến Thành - KTX Khu B ĐHQG", "color": "#00897B", "interval": 10, "start_time": "05:00", "end_time": "20:15", "fare": 7000 },
-    { "id": "R30", "code": "30", "name": "Chợ Tân Hương - ĐH Quốc Tế", "color": "#F4511E", "interval": 15, "start_time": "05:00", "end_time": "19:30", "fare": 7000 },
-    { "id": "R53", "code": "53", "name": "Lê Hồng Phong - ĐH Quốc Gia", "color": "#43A047", "interval": 12, "start_time": "05:10", "end_time": "19:40", "fare": 7000 },
-    { "id": "R56", "code": "56", "name": "Chợ Lớn - ĐH Giao Thông Vận Tải", "color": "#FB8C00", "interval": 10, "start_time": "05:00", "end_time": "20:00", "fare": 7000 },
-    { "id": "R150", "code": "150", "name": "Bến xe Chợ Lớn - Ngã 3 Tân Vạn", "color": "#3949AB", "interval": 6, "start_time": "04:30", "end_time": "21:00", "fare": 7000 }
+    {
+      "id": "R01",
+      "code": "01",
+      "name": "Bến Thành - Bến xe Chợ Lớn",
+      "color": "#E53935",
+      "interval": 10,
+      "start_time": "05:00",
+      "end_time": "21:00",
+      "fare": 7000
+    },
+    {
+      "id": "R03",
+      "code": "03",
+      "name": "Bến Thành - Thạnh Lộc",
+      "color": "#8E24AA",
+      "interval": 12,
+      "start_time": "05:15",
+      "end_time": "20:45",
+      "fare": 7000
+    },
+    {
+      "id": "R08",
+      "code": "08",
+      "name": "Bến xe Quận 8 - ĐH Quốc Gia",
+      "color": "#1E88E5",
+      "interval": 8,
+      "start_time": "04:40",
+      "end_time": "20:30",
+      "fare": 7000
+    },
+    {
+      "id": "R19",
+      "code": "19",
+      "name": "Bến Thành - KTX Khu B ĐHQG",
+      "color": "#00897B",
+      "interval": 10,
+      "start_time": "05:00",
+      "end_time": "20:15",
+      "fare": 7000
+    },
+    {
+      "id": "R30",
+      "code": "30",
+      "name": "Chợ Tân Hương - ĐH Quốc Tế",
+      "color": "#F4511E",
+      "interval": 15,
+      "start_time": "05:00",
+      "end_time": "19:30",
+      "fare": 7000
+    },
+    {
+      "id": "R53",
+      "code": "53",
+      "name": "Lê Hồng Phong - ĐH Quốc Gia",
+      "color": "#43A047",
+      "interval": 12,
+      "start_time": "05:10",
+      "end_time": "19:40",
+      "fare": 7000
+    },
+    {
+      "id": "R56",
+      "code": "56",
+      "name": "Chợ Lớn - ĐH Giao Thông Vận Tải",
+      "color": "#FB8C00",
+      "interval": 10,
+      "start_time": "05:00",
+      "end_time": "20:00",
+      "fare": 7000
+    },
+    {
+      "id": "R150",
+      "code": "150",
+      "name": "Bến xe Chợ Lớn - Ngã 3 Tân Vạn",
+      "color": "#3949AB",
+      "interval": 6,
+      "start_time": "04:30",
+      "end_time": "21:00",
+      "fare": 7000
+    },
+    {
+      "id": "R06",
+      "code": "06",
+      "name": "Bến xe Chợ Lớn - ĐH Nông Lâm",
+      "color": "#0284C7",
+      "interval": 8,
+      "start_time": "04:50",
+      "end_time": "21:00",
+      "fare": 7000
+    },
+    {
+      "id": "R104",
+      "code": "104",
+      "name": "Bến xe An Sương - ĐH Nông Lâm",
+      "color": "#D97706",
+      "interval": 10,
+      "start_time": "04:45",
+      "end_time": "20:15",
+      "fare": 7000
+    },
+    {
+      "id": "R109",
+      "code": "109",
+      "name": "Sân Bay Tân Sơn Nhất - Bến Thành (Express)",
+      "color": "#7C3AED",
+      "interval": 15,
+      "start_time": "05:30",
+      "end_time": "23:30",
+      "fare": 15000
+    }
   ],
   "stations": [
-    { "id": "S01", "name": "Trạm Trung chuyển Bến Thành", "lat": 10.7725, "lng": 106.6980, "zone": "Quận 1" },
-    { "id": "S02", "name": "Khách sạn New World", "lat": 10.7708, "lng": 106.6938, "zone": "Quận 1" },
-    { "id": "S03", "name": "Công viên 23/9", "lat": 10.7685, "lng": 106.6912, "zone": "Quận 1" },
-    { "id": "S04", "name": "Nhà hát Thành Phố", "lat": 10.7766, "lng": 106.7032, "zone": "Quận 1" },
-    { "id": "S05", "name": "Bưu điện Trung tâm / Nhà thờ Đức Bà", "lat": 10.7798, "lng": 106.6990, "zone": "Quận 1" },
-    { "id": "S06", "name": "Hồ Con Rùa", "lat": 10.7827, "lng": 106.6958, "zone": "Quận 3" },
-    { "id": "S07", "name": "ĐH Kinh Tế CS A", "lat": 10.7812, "lng": 106.6945, "zone": "Quận 3" },
-    { "id": "S08", "name": "Thảo Cầm Viên Sài Gòn", "lat": 10.7876, "lng": 106.7051, "zone": "Quận 1" },
-    { "id": "S09", "name": "ĐH Khoa Học Xã Hội & Nhân Văn CS1", "lat": 10.7865, "lng": 106.7015, "zone": "Quận 1" },
-    { "id": "S10", "name": "Đài Truyền Hình HTV", "lat": 10.7891, "lng": 106.7022, "zone": "Quận 1" },
-    { "id": "S11", "name": "Cầu Thị Nghè", "lat": 10.7905, "lng": 106.7042, "zone": "Bình Thạnh" },
-    { "id": "S12", "name": "Bến xe Chợ Lớn", "lat": 10.7512, "lng": 106.6534, "zone": "Quận 5" },
-    { "id": "S13", "name": "Bệnh viện Chợ Rẫy", "lat": 10.7580, "lng": 106.6595, "zone": "Quận 5" },
-    { "id": "S14", "name": "ĐH Y Dược TP.HCM", "lat": 10.7562, "lng": 106.6610, "zone": "Quận 5" },
-    { "id": "S15", "name": "ĐH Sư Phạm CS1", "lat": 10.7602, "lng": 106.6795, "zone": "Quận 5" },
-    { "id": "S16", "name": "ĐH Khoa Học Tự Nhiên CS1", "lat": 10.7628, "lng": 106.6825, "zone": "Quận 5" },
-    { "id": "S17", "name": "Bến xe Lê Hồng Phong", "lat": 10.7645, "lng": 106.6775, "zone": "Quận 5" },
-    { "id": "S18", "name": "Bến xe Quận 8", "lat": 10.7385, "lng": 106.6582, "zone": "Quận 8" },
-    { "id": "S19", "name": "Cầu Chánh Hưng", "lat": 10.7445, "lng": 106.6635, "zone": "Quận 8" },
-    { "id": "S20", "name": "Cầu Chữ Y", "lat": 10.7540, "lng": 106.6840, "zone": "Quận 5" },
-    { "id": "S21", "name": "Ngã tư Hàng Xanh (Hub Trung Chuyển)", "lat": 10.8016, "lng": 106.7112, "zone": "Bình Thạnh" },
-    { "id": "S22", "name": "ĐH HUTECH", "lat": 10.8025, "lng": 106.7135, "zone": "Bình Thạnh" },
-    { "id": "S23", "name": "ĐH Giao Thông Vận Tải CS1", "lat": 10.8038, "lng": 106.7152, "zone": "Bình Thạnh" },
-    { "id": "S24", "name": "ĐH Quốc Tế Hồng Bàng", "lat": 10.8005, "lng": 106.7100, "zone": "Bình Thạnh" },
-    { "id": "S25", "name": "Bến xe Miền Đông Cũ", "lat": 10.8142, "lng": 106.7118, "zone": "Bình Thạnh" },
-    { "id": "S26", "name": "Cầu Sài Gòn", "lat": 10.7995, "lng": 106.7235, "zone": "Bình Thạnh" },
-    { "id": "S27", "name": "Tân Cảng", "lat": 10.7970, "lng": 106.7205, "zone": "Bình Thạnh" },
-    { "id": "S28", "name": "Masteri Thảo Điền", "lat": 10.8035, "lng": 106.7320, "zone": "Thủ Đức" },
-    { "id": "S29", "name": "Cầu Đen - An Phú", "lat": 10.8055, "lng": 106.7410, "zone": "Thủ Đức" },
-    { "id": "S30", "name": "Ngã ba Cát Lái", "lat": 10.8080, "lng": 106.7530, "zone": "Thủ Đức" },
-    { "id": "S31", "name": "Metro Rạch Chiếc", "lat": 10.8175, "lng": 106.7610, "zone": "Thủ Đức" },
-    { "id": "S32", "name": "UBND TP Thủ Đức", "lat": 10.8260, "lng": 106.7635, "zone": "Thủ Đức" },
-    { "id": "S33", "name": "Chợ Bắc Ninh", "lat": 10.8440, "lng": 106.7710, "zone": "Thủ Đức" },
-    { "id": "S34", "name": "ĐH Sư Phạm Kỹ Thuật (Hub Thủ Đức)", "lat": 10.8507, "lng": 106.7719, "zone": "Thủ Đức" },
-    { "id": "S35", "name": "Ngã tư Thủ Đức", "lat": 10.8479, "lng": 106.7725, "zone": "Thủ Đức" },
-    { "id": "S36", "name": "Khu Công Nghệ Cao (SHTP)", "lat": 10.8550, "lng": 106.7850, "zone": "Thủ Đức" },
-    { "id": "S37", "name": "Khu Du Lịch Suối Tiên", "lat": 10.8655, "lng": 106.8020, "zone": "Thủ Đức" },
-    { "id": "S38", "name": "Bến xe Miền Đông Mới", "lat": 10.8715, "lng": 106.8120, "zone": "Thủ Đức" },
-    { "id": "S39", "name": "Cầu Đồng Nai", "lat": 10.8870, "lng": 106.8320, "zone": "Đồng Nai" },
-    { "id": "S40", "name": "Ngã 3 Tân Vạn", "lat": 10.8930, "lng": 106.8390, "zone": "Bình Dương" },
-    { "id": "S41", "name": "ĐH Nông Lâm TP.HCM", "lat": 10.8705, "lng": 106.7915, "zone": "Thủ Đức" },
-    { "id": "S42", "name": "Cổng ĐHQG TP.HCM", "lat": 10.8735, "lng": 106.8005, "zone": "Dĩ An" },
-    { "id": "S43", "name": "ĐH Quốc Tế - ĐHQG", "lat": 10.8776, "lng": 106.8015, "zone": "Dĩ An" },
-    { "id": "S44", "name": "ĐH Bách Khoa CS2", "lat": 10.8805, "lng": 106.8055, "zone": "Dĩ An" },
-    { "id": "S45", "name": "KTX Khu A ĐHQG", "lat": 10.8782, "lng": 106.8062, "zone": "Dĩ An" },
-    { "id": "S46", "name": "ĐH Khoa Học Tự Nhiên CS2", "lat": 10.8755, "lng": 106.7995, "zone": "Dĩ An" },
-    { "id": "S47", "name": "ĐH Kinh Tế - Luật (UEL)", "lat": 10.8720, "lng": 106.7780, "zone": "Thủ Đức" },
-    { "id": "S48", "name": "ĐH Thể Dục Thể Thao", "lat": 10.8745, "lng": 106.7950, "zone": "Dĩ An" },
-    { "id": "S49", "name": "KTX Khu B ĐHQG (Bến xe ĐHQG)", "lat": 10.8825, "lng": 106.7825, "zone": "Dĩ An" },
-    { "id": "S50", "name": "ĐH Khoa Học Xã Hội & Nhân Văn CS2", "lat": 10.8730, "lng": 106.8025, "zone": "Dĩ An" },
-    { "id": "S51", "name": "Hồ Đá Làng Đại Học", "lat": 10.8760, "lng": 106.7930, "zone": "Dĩ An" },
-    { "id": "S52", "name": "Sân Bay Tân Sơn Nhất", "lat": 10.8185, "lng": 106.6588, "zone": "Tân Bình" },
-    { "id": "S53", "name": "Công viên Hoàng Văn Thụ", "lat": 10.8002, "lng": 106.6605, "zone": "Tân Bình" },
-    { "id": "S54", "name": "Ngã 4 Phú Nhuận", "lat": 10.7990, "lng": 106.6800, "zone": "Phú Nhuận" },
-    { "id": "S55", "name": "Ngã 5 Chuồng Chó (Gò Vấp)", "lat": 10.8280, "lng": 106.6780, "zone": "Gò Vấp" },
-    { "id": "S56", "name": "ĐH Công Nghiệp TP.HCM (IUH)", "lat": 10.8222, "lng": 106.6875, "zone": "Gò Vấp" },
-    { "id": "S57", "name": "Chợ Bà Chiểu", "lat": 10.8010, "lng": 106.6985, "zone": "Bình Thạnh" },
-    { "id": "S58", "name": "Chợ Tân Hương", "lat": 10.7930, "lng": 106.6210, "zone": "Tân Phú" },
-    { "id": "S59", "name": "ĐH Công Thương TP.HCM (HUIT)", "lat": 10.8060, "lng": 106.6290, "zone": "Tân Phú" },
-    { "id": "S60", "name": "Ngã tư Bảy Hiền", "lat": 10.7915, "lng": 106.6530, "zone": "Tân Bình" },
-    { "id": "S61", "name": "Bến xe An Sương", "lat": 10.8465, "lng": 106.6135, "zone": "Quận 12" },
-    { "id": "S62", "name": "Bến xe Ngã 4 Ga", "lat": 10.8625, "lng": 106.6870, "zone": "Quận 12" },
-    { "id": "S63", "name": "Thạnh Lộc (Quận 12)", "lat": 10.8750, "lng": 106.6960, "zone": "Quận 12" },
-    { "id": "S64", "name": "Chợ Thủ Đức", "lat": 10.8520, "lng": 106.7580, "zone": "Thủ Đức" },
-    { "id": "S65", "name": "Cầu Bình Triệu", "lat": 10.8220, "lng": 106.7130, "zone": "Bình Thạnh" }
+    {
+      "id": "S01",
+      "name": "Trạm Trung chuyển Bến Thành",
+      "lat": 10.7725,
+      "lng": 106.698,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S02",
+      "name": "Khách sạn New World",
+      "lat": 10.7708,
+      "lng": 106.6938,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S03",
+      "name": "Công viên 23/9",
+      "lat": 10.7685,
+      "lng": 106.6912,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S04",
+      "name": "Nhà hát Thành Phố",
+      "lat": 10.7766,
+      "lng": 106.7032,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S05",
+      "name": "Bưu điện Trung tâm / Nhà thờ Đức Bà",
+      "lat": 10.7798,
+      "lng": 106.699,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S06",
+      "name": "Hồ Con Rùa",
+      "lat": 10.7827,
+      "lng": 106.6958,
+      "zone": "Quận 3"
+    },
+    {
+      "id": "S07",
+      "name": "ĐH Kinh Tế CS A",
+      "lat": 10.7812,
+      "lng": 106.6945,
+      "zone": "Quận 3"
+    },
+    {
+      "id": "S08",
+      "name": "Thảo Cầm Viên Sài Gòn",
+      "lat": 10.7876,
+      "lng": 106.7051,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S09",
+      "name": "ĐH Khoa Học Xã Hội & Nhân Văn CS1",
+      "lat": 10.7865,
+      "lng": 106.7015,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S10",
+      "name": "Đài Truyền Hình HTV",
+      "lat": 10.7891,
+      "lng": 106.7022,
+      "zone": "Quận 1"
+    },
+    {
+      "id": "S11",
+      "name": "Cầu Thị Nghè",
+      "lat": 10.7905,
+      "lng": 106.7042,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S12",
+      "name": "Bến xe Chợ Lớn",
+      "lat": 10.7512,
+      "lng": 106.6534,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S13",
+      "name": "Bệnh viện Chợ Rẫy",
+      "lat": 10.758,
+      "lng": 106.6595,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S14",
+      "name": "ĐH Y Dược TP.HCM",
+      "lat": 10.7562,
+      "lng": 106.661,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S15",
+      "name": "ĐH Sư Phạm CS1",
+      "lat": 10.7602,
+      "lng": 106.6795,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S16",
+      "name": "ĐH Khoa Học Tự Nhiên CS1",
+      "lat": 10.7628,
+      "lng": 106.6825,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S17",
+      "name": "Bến xe Lê Hồng Phong",
+      "lat": 10.7645,
+      "lng": 106.6775,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S18",
+      "name": "Bến xe Quận 8",
+      "lat": 10.7385,
+      "lng": 106.6582,
+      "zone": "Quận 8"
+    },
+    {
+      "id": "S19",
+      "name": "Cầu Chánh Hưng",
+      "lat": 10.7445,
+      "lng": 106.6635,
+      "zone": "Quận 8"
+    },
+    {
+      "id": "S20",
+      "name": "Cầu Chữ Y",
+      "lat": 10.754,
+      "lng": 106.684,
+      "zone": "Quận 5"
+    },
+    {
+      "id": "S21",
+      "name": "Ngã tư Hàng Xanh (Hub Trung Chuyển)",
+      "lat": 10.8016,
+      "lng": 106.7112,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S22",
+      "name": "ĐH HUTECH",
+      "lat": 10.8025,
+      "lng": 106.7135,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S23",
+      "name": "ĐH Giao Thông Vận Tải CS1",
+      "lat": 10.8038,
+      "lng": 106.7152,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S24",
+      "name": "ĐH Quốc Tế Hồng Bàng",
+      "lat": 10.8005,
+      "lng": 106.71,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S25",
+      "name": "Bến xe Miền Đông Cũ",
+      "lat": 10.8142,
+      "lng": 106.7118,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S26",
+      "name": "Cầu Sài Gòn",
+      "lat": 10.7995,
+      "lng": 106.7235,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S27",
+      "name": "Tân Cảng",
+      "lat": 10.797,
+      "lng": 106.7205,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S28",
+      "name": "Masteri Thảo Điền",
+      "lat": 10.8035,
+      "lng": 106.732,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S29",
+      "name": "Cầu Đen - An Phú",
+      "lat": 10.8055,
+      "lng": 106.741,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S30",
+      "name": "Ngã ba Cát Lái",
+      "lat": 10.808,
+      "lng": 106.753,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S31",
+      "name": "Metro Rạch Chiếc",
+      "lat": 10.8175,
+      "lng": 106.761,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S32",
+      "name": "UBND TP Thủ Đức",
+      "lat": 10.826,
+      "lng": 106.7635,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S33",
+      "name": "Chợ Bắc Ninh",
+      "lat": 10.844,
+      "lng": 106.771,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S34",
+      "name": "ĐH Sư Phạm Kỹ Thuật (Hub Thủ Đức)",
+      "lat": 10.8507,
+      "lng": 106.7719,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S35",
+      "name": "Ngã tư Thủ Đức",
+      "lat": 10.8479,
+      "lng": 106.7725,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S36",
+      "name": "Khu Công Nghệ Cao (SHTP)",
+      "lat": 10.855,
+      "lng": 106.785,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S37",
+      "name": "Khu Du Lịch Suối Tiên",
+      "lat": 10.8655,
+      "lng": 106.802,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S38",
+      "name": "Bến xe Miền Đông Mới",
+      "lat": 10.8715,
+      "lng": 106.812,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S39",
+      "name": "Cầu Đồng Nai",
+      "lat": 10.887,
+      "lng": 106.832,
+      "zone": "Đồng Nai"
+    },
+    {
+      "id": "S40",
+      "name": "Ngã 3 Tân Vạn",
+      "lat": 10.893,
+      "lng": 106.839,
+      "zone": "Bình Dương"
+    },
+    {
+      "id": "S41",
+      "name": "ĐH Nông Lâm TP.HCM",
+      "lat": 10.8705,
+      "lng": 106.7915,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S42",
+      "name": "Cổng ĐHQG TP.HCM",
+      "lat": 10.8735,
+      "lng": 106.8005,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S43",
+      "name": "ĐH Quốc Tế - ĐHQG",
+      "lat": 10.8776,
+      "lng": 106.8015,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S44",
+      "name": "ĐH Bách Khoa CS2",
+      "lat": 10.8805,
+      "lng": 106.8055,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S45",
+      "name": "KTX Khu A ĐHQG",
+      "lat": 10.8782,
+      "lng": 106.8062,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S46",
+      "name": "ĐH Khoa Học Tự Nhiên CS2",
+      "lat": 10.8755,
+      "lng": 106.7995,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S47",
+      "name": "ĐH Kinh Tế - Luật (UEL)",
+      "lat": 10.872,
+      "lng": 106.778,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S48",
+      "name": "ĐH Thể Dục Thể Thao",
+      "lat": 10.8745,
+      "lng": 106.795,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S49",
+      "name": "KTX Khu B ĐHQG (Bến xe ĐHQG)",
+      "lat": 10.8825,
+      "lng": 106.7825,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S50",
+      "name": "ĐH Khoa Học Xã Hội & Nhân Văn CS2",
+      "lat": 10.873,
+      "lng": 106.8025,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S51",
+      "name": "Hồ Đá Làng Đại Học",
+      "lat": 10.876,
+      "lng": 106.793,
+      "zone": "Dĩ An"
+    },
+    {
+      "id": "S52",
+      "name": "Sân Bay Tân Sơn Nhất",
+      "lat": 10.8185,
+      "lng": 106.6588,
+      "zone": "Tân Bình"
+    },
+    {
+      "id": "S53",
+      "name": "Công viên Hoàng Văn Thụ",
+      "lat": 10.8002,
+      "lng": 106.6605,
+      "zone": "Tân Bình"
+    },
+    {
+      "id": "S54",
+      "name": "Ngã 4 Phú Nhuận",
+      "lat": 10.799,
+      "lng": 106.68,
+      "zone": "Phú Nhuận"
+    },
+    {
+      "id": "S55",
+      "name": "Ngã 5 Chuồng Chó (Gò Vấp)",
+      "lat": 10.828,
+      "lng": 106.678,
+      "zone": "Gò Vấp"
+    },
+    {
+      "id": "S56",
+      "name": "ĐH Công Nghiệp TP.HCM (IUH)",
+      "lat": 10.8222,
+      "lng": 106.6875,
+      "zone": "Gò Vấp"
+    },
+    {
+      "id": "S57",
+      "name": "Chợ Bà Chiểu",
+      "lat": 10.801,
+      "lng": 106.6985,
+      "zone": "Bình Thạnh"
+    },
+    {
+      "id": "S58",
+      "name": "Chợ Tân Hương",
+      "lat": 10.793,
+      "lng": 106.621,
+      "zone": "Tân Phú"
+    },
+    {
+      "id": "S59",
+      "name": "ĐH Công Thương TP.HCM (HUIT)",
+      "lat": 10.806,
+      "lng": 106.629,
+      "zone": "Tân Phú"
+    },
+    {
+      "id": "S60",
+      "name": "Ngã tư Bảy Hiền",
+      "lat": 10.7915,
+      "lng": 106.653,
+      "zone": "Tân Bình"
+    },
+    {
+      "id": "S61",
+      "name": "Bến xe An Sương",
+      "lat": 10.8465,
+      "lng": 106.6135,
+      "zone": "Quận 12"
+    },
+    {
+      "id": "S62",
+      "name": "Bến xe Ngã 4 Ga",
+      "lat": 10.8625,
+      "lng": 106.687,
+      "zone": "Quận 12"
+    },
+    {
+      "id": "S63",
+      "name": "Thạnh Lộc (Quận 12)",
+      "lat": 10.875,
+      "lng": 106.696,
+      "zone": "Quận 12"
+    },
+    {
+      "id": "S64",
+      "name": "Chợ Thủ Đức",
+      "lat": 10.852,
+      "lng": 106.758,
+      "zone": "Thủ Đức"
+    },
+    {
+      "id": "S65",
+      "name": "Cầu Bình Triệu",
+      "lat": 10.822,
+      "lng": 106.713,
+      "zone": "Bình Thạnh"
+    }
   ],
   "edges": [
-    { "from": "S01", "to": "S04", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 4 },
-    { "from": "S04", "to": "S05", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.6, "duration_mins": 3 },
-    { "from": "S05", "to": "S09", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 3 },
-    { "from": "S09", "to": "S08", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S08", "to": "S11", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.7, "duration_mins": 3 },
-    { "from": "S11", "to": "S21", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.4, "duration_mins": 6 },
-    { "from": "S21", "to": "S26", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.6, "duration_mins": 5 },
-    { "from": "S26", "to": "S28", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.3, "duration_mins": 4 },
-    { "from": "S28", "to": "S29", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.1, "duration_mins": 3 },
-    { "from": "S29", "to": "S30", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.5, "duration_mins": 4 },
-    { "from": "S30", "to": "S31", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.4, "duration_mins": 4 },
-    { "from": "S31", "to": "S35", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 3.5, "duration_mins": 9 },
-    { "from": "S35", "to": "S36", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.5, "duration_mins": 5 },
-    { "from": "S36", "to": "S37", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 2.2, "duration_mins": 6 },
-    { "from": "S37", "to": "S41", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.0, "duration_mins": 3 },
-    { "from": "S41", "to": "S42", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 2 },
-    { "from": "S42", "to": "S50", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S50", "to": "S46", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S46", "to": "S51", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 3 },
-    { "from": "S51", "to": "S49", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.2, "duration_mins": 4 },
-
-    { "from": "S49", "to": "S51", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S51", "to": "S46", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 3 },
-    { "from": "S46", "to": "S50", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S50", "to": "S42", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S42", "to": "S41", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 2 },
-    { "from": "S41", "to": "S37", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.0, "duration_mins": 3 },
-    { "from": "S37", "to": "S36", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 2.2, "duration_mins": 6 },
-    { "from": "S36", "to": "S35", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.5, "duration_mins": 5 },
-    { "from": "S35", "to": "S31", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 3.5, "duration_mins": 9 },
-    { "from": "S31", "to": "S30", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.4, "duration_mins": 4 },
-    { "from": "S30", "to": "S29", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.5, "duration_mins": 4 },
-    { "from": "S29", "to": "S28", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.1, "duration_mins": 3 },
-    { "from": "S28", "to": "S26", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.3, "duration_mins": 4 },
-    { "from": "S26", "to": "S21", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.6, "duration_mins": 5 },
-    { "from": "S21", "to": "S11", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 1.4, "duration_mins": 6 },
-    { "from": "S11", "to": "S08", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.7, "duration_mins": 3 },
-    { "from": "S08", "to": "S09", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S09", "to": "S05", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 3 },
-    { "from": "S05", "to": "S04", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.6, "duration_mins": 3 },
-    { "from": "S04", "to": "S01", "route_id": "R19", "route_name": "Tuyến 19", "distance_km": 0.8, "duration_mins": 4 },
-
-    { "from": "S18", "to": "S19", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.0, "duration_mins": 4 },
-    { "from": "S19", "to": "S20", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.5, "duration_mins": 5 },
-    { "from": "S20", "to": "S16", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.2, "duration_mins": 5 },
-    { "from": "S16", "to": "S15", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S15", "to": "S03", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.8, "duration_mins": 7 },
-    { "from": "S03", "to": "S06", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.9, "duration_mins": 8 },
-    { "from": "S06", "to": "S21", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 2.8, "duration_mins": 10 },
-    { "from": "S21", "to": "S22", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.6, "duration_mins": 3 },
-    { "from": "S22", "to": "S25", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.5, "duration_mins": 6 },
-    { "from": "S25", "to": "S65", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.2, "duration_mins": 5 },
-    { "from": "S65", "to": "S64", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 4.8, "duration_mins": 14 },
-    { "from": "S64", "to": "S34", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.4, "duration_mins": 5 },
-    { "from": "S34", "to": "S35", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.6, "duration_mins": 2 },
-    { "from": "S35", "to": "S41", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 3.1, "duration_mins": 8 },
-    { "from": "S41", "to": "S43", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S43", "to": "S44", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.6, "duration_mins": 2 },
-    { "from": "S44", "to": "S45", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.5, "duration_mins": 2 },
-
-    { "from": "S45", "to": "S44", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S44", "to": "S43", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.6, "duration_mins": 2 },
-    { "from": "S43", "to": "S41", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S41", "to": "S35", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 3.1, "duration_mins": 8 },
-    { "from": "S35", "to": "S34", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.6, "duration_mins": 2 },
-    { "from": "S34", "to": "S64", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.4, "duration_mins": 5 },
-    { "from": "S64", "to": "S65", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 4.8, "duration_mins": 14 },
-    { "from": "S65", "to": "S25", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.2, "duration_mins": 5 },
-    { "from": "S25", "to": "S22", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.5, "duration_mins": 6 },
-    { "from": "S22", "to": "S21", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.6, "duration_mins": 3 },
-    { "from": "S21", "to": "S06", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 2.8, "duration_mins": 10 },
-    { "from": "S06", "to": "S03", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.9, "duration_mins": 8 },
-    { "from": "S03", "to": "S15", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.8, "duration_mins": 7 },
-    { "from": "S15", "to": "S16", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S16", "to": "S20", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.2, "duration_mins": 5 },
-    { "from": "S20", "to": "S19", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.5, "duration_mins": 5 },
-    { "from": "S19", "to": "S18", "route_id": "R08", "route_name": "Tuyến 08", "distance_km": 1.0, "duration_mins": 4 },
-
-    { "from": "S01", "to": "S02", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 0.6, "duration_mins": 3 },
-    { "from": "S02", "to": "S03", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S03", "to": "S16", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 1.6, "duration_mins": 6 },
-    { "from": "S16", "to": "S14", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 2.1, "duration_mins": 8 },
-    { "from": "S14", "to": "S13", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S13", "to": "S12", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 1.1, "duration_mins": 5 },
-
-    { "from": "S12", "to": "S13", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 1.1, "duration_mins": 5 },
-    { "from": "S13", "to": "S14", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S14", "to": "S16", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 2.1, "duration_mins": 8 },
-    { "from": "S16", "to": "S03", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 1.6, "duration_mins": 6 },
-    { "from": "S03", "to": "S02", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S02", "to": "S01", "route_id": "R01", "route_name": "Tuyến 01", "distance_km": 0.6, "duration_mins": 3 },
-
-    { "from": "S12", "to": "S13", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.1, "duration_mins": 4 },
-    { "from": "S13", "to": "S16", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.3, "duration_mins": 7 },
-    { "from": "S16", "to": "S06", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.7, "duration_mins": 9 },
-    { "from": "S06", "to": "S21", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.8, "duration_mins": 9 },
-    { "from": "S21", "to": "S26", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.6, "duration_mins": 5 },
-    { "from": "S26", "to": "S30", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 3.8, "duration_mins": 10 },
-    { "from": "S30", "to": "S35", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 4.8, "duration_mins": 12 },
-    { "from": "S35", "to": "S36", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.5, "duration_mins": 4 },
-    { "from": "S36", "to": "S37", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.2, "duration_mins": 6 },
-    { "from": "S37", "to": "S38", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.8, "duration_mins": 5 },
-    { "from": "S38", "to": "S39", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 3.0, "duration_mins": 7 },
-    { "from": "S39", "to": "S40", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.2, "duration_mins": 4 },
-
-    { "from": "S40", "to": "S39", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S39", "to": "S38", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 3.0, "duration_mins": 7 },
-    { "from": "S38", "to": "S37", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.8, "duration_mins": 5 },
-    { "from": "S37", "to": "S36", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.2, "duration_mins": 6 },
-    { "from": "S36", "to": "S35", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.5, "duration_mins": 4 },
-    { "from": "S35", "to": "S30", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 4.8, "duration_mins": 12 },
-    { "from": "S30", "to": "S26", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 3.8, "duration_mins": 10 },
-    { "from": "S26", "to": "S21", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.6, "duration_mins": 5 },
-    { "from": "S21", "to": "S06", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.8, "duration_mins": 9 },
-    { "from": "S06", "to": "S16", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.7, "duration_mins": 9 },
-    { "from": "S16", "to": "S13", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 2.3, "duration_mins": 7 },
-    { "from": "S13", "to": "S12", "route_id": "R150", "route_name": "Tuyến 150", "distance_km": 1.1, "duration_mins": 4 },
-
-    { "from": "S17", "to": "S16", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 0.6, "duration_mins": 3 },
-    { "from": "S16", "to": "S07", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.4, "duration_mins": 8 },
-    { "from": "S07", "to": "S06", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S06", "to": "S21", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.8, "duration_mins": 9 },
-    { "from": "S21", "to": "S65", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.2, "duration_mins": 7 },
-    { "from": "S65", "to": "S64", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 4.8, "duration_mins": 14 },
-    { "from": "S64", "to": "S34", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 1.4, "duration_mins": 5 },
-    { "from": "S34", "to": "S47", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.8, "duration_mins": 7 },
-    { "from": "S47", "to": "S41", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 1.5, "duration_mins": 5 },
-    { "from": "S41", "to": "S49", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.0, "duration_mins": 6 },
-
-    { "from": "S49", "to": "S41", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.0, "duration_mins": 6 },
-    { "from": "S41", "to": "S47", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 1.5, "duration_mins": 5 },
-    { "from": "S47", "to": "S34", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.8, "duration_mins": 7 },
-    { "from": "S34", "to": "S64", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 1.4, "duration_mins": 5 },
-    { "from": "S64", "to": "S65", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 4.8, "duration_mins": 14 },
-    { "from": "S65", "to": "S21", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.2, "duration_mins": 7 },
-    { "from": "S21", "to": "S06", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.8, "duration_mins": 9 },
-    { "from": "S06", "to": "S07", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S07", "to": "S16", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 2.4, "duration_mins": 8 },
-    { "from": "S16", "to": "S17", "route_id": "R53", "route_name": "Tuyến 53", "distance_km": 0.6, "duration_mins": 3 },
-
-    { "from": "S12", "to": "S14", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.3, "duration_mins": 5 },
-    { "from": "S14", "to": "S16", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 2.1, "duration_mins": 8 },
-    { "from": "S16", "to": "S02", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.5, "duration_mins": 6 },
-    { "from": "S02", "to": "S05", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.2, "duration_mins": 5 },
-    { "from": "S05", "to": "S09", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 0.8, "duration_mins": 3 },
-    { "from": "S09", "to": "S10", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 0.3, "duration_mins": 1 },
-    { "from": "S10", "to": "S21", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.6, "duration_mins": 6 },
-    { "from": "S21", "to": "S23", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 0.5, "duration_mins": 2 },
-
-    { "from": "S23", "to": "S21", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 0.5, "duration_mins": 2 },
-    { "from": "S21", "to": "S10", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.6, "duration_mins": 6 },
-    { "from": "S10", "to": "S09", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 0.3, "duration_mins": 1 },
-    { "from": "S09", "to": "S05", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 0.8, "duration_mins": 3 },
-    { "from": "S05", "to": "S02", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.2, "duration_mins": 5 },
-    { "from": "S02", "to": "S16", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.5, "duration_mins": 6 },
-    { "from": "S16", "to": "S14", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 2.1, "duration_mins": 8 },
-    { "from": "S14", "to": "S12", "route_id": "R56", "route_name": "Tuyến 56", "distance_km": 1.3, "duration_mins": 5 },
-
-    { "from": "S58", "to": "S59", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 1.7, "duration_mins": 6 },
-    { "from": "S59", "to": "S60", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 3.2, "duration_mins": 11 },
-    { "from": "S60", "to": "S07", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 4.1, "duration_mins": 13 },
-    { "from": "S07", "to": "S06", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S06", "to": "S21", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 2.8, "duration_mins": 9 },
-    { "from": "S21", "to": "S26", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 1.6, "duration_mins": 5 },
-    { "from": "S26", "to": "S31", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 5.2, "duration_mins": 13 },
-    { "from": "S31", "to": "S35", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 3.5, "duration_mins": 9 },
-    { "from": "S35", "to": "S41", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 3.1, "duration_mins": 8 },
-    { "from": "S41", "to": "S43", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 1.2, "duration_mins": 4 },
-
-    { "from": "S43", "to": "S41", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S41", "to": "S35", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 3.1, "duration_mins": 8 },
-    { "from": "S35", "to": "S31", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 3.5, "duration_mins": 9 },
-    { "from": "S31", "to": "S26", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 5.2, "duration_mins": 13 },
-    { "from": "S26", "to": "S21", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 1.6, "duration_mins": 5 },
-    { "from": "S21", "to": "S06", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 2.8, "duration_mins": 9 },
-    { "from": "S06", "to": "S07", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 0.4, "duration_mins": 2 },
-    { "from": "S07", "to": "S60", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 4.1, "duration_mins": 13 },
-    { "from": "S60", "to": "S59", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 3.2, "duration_mins": 11 },
-    { "from": "S59", "to": "S58", "route_id": "R30", "route_name": "Tuyến 30", "distance_km": 1.7, "duration_mins": 6 },
-
-    { "from": "S01", "to": "S05", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 1.0, "duration_mins": 5 },
-    { "from": "S05", "to": "S54", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 3.2, "duration_mins": 10 },
-    { "from": "S54", "to": "S55", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 3.5, "duration_mins": 11 },
-    { "from": "S55", "to": "S56", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S56", "to": "S62", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 4.8, "duration_mins": 14 },
-    { "from": "S62", "to": "S63", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 1.8, "duration_mins": 6 },
-
-    { "from": "S63", "to": "S62", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 1.8, "duration_mins": 6 },
-    { "from": "S62", "to": "S56", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 4.8, "duration_mins": 14 },
-    { "from": "S56", "to": "S55", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 1.2, "duration_mins": 4 },
-    { "from": "S55", "to": "S54", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 3.5, "duration_mins": 11 },
-    { "from": "S54", "to": "S05", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 3.2, "duration_mins": 10 },
-    { "from": "S05", "to": "S01", "route_id": "R03", "route_name": "Tuyến 03", "distance_km": 1.0, "duration_mins": 5 }
+    {
+      "from": "S01",
+      "to": "S04",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 4
+    },
+    {
+      "from": "S04",
+      "to": "S05",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S05",
+      "to": "S09",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 3
+    },
+    {
+      "from": "S09",
+      "to": "S08",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S08",
+      "to": "S11",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.7,
+      "duration_mins": 3
+    },
+    {
+      "from": "S11",
+      "to": "S21",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.4,
+      "duration_mins": 6
+    },
+    {
+      "from": "S21",
+      "to": "S26",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S26",
+      "to": "S28",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.3,
+      "duration_mins": 4
+    },
+    {
+      "from": "S28",
+      "to": "S29",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S29",
+      "to": "S30",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S30",
+      "to": "S31",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.4,
+      "duration_mins": 4
+    },
+    {
+      "from": "S31",
+      "to": "S35",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 3.5,
+      "duration_mins": 9
+    },
+    {
+      "from": "S35",
+      "to": "S36",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.5,
+      "duration_mins": 5
+    },
+    {
+      "from": "S36",
+      "to": "S37",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 2.2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S37",
+      "to": "S41",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S41",
+      "to": "S42",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 2
+    },
+    {
+      "from": "S42",
+      "to": "S50",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S50",
+      "to": "S46",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S46",
+      "to": "S51",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 3
+    },
+    {
+      "from": "S51",
+      "to": "S49",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S49",
+      "to": "S51",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S51",
+      "to": "S46",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 3
+    },
+    {
+      "from": "S46",
+      "to": "S50",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S50",
+      "to": "S42",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S42",
+      "to": "S41",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 2
+    },
+    {
+      "from": "S41",
+      "to": "S37",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S37",
+      "to": "S36",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 2.2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S36",
+      "to": "S35",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.5,
+      "duration_mins": 5
+    },
+    {
+      "from": "S35",
+      "to": "S31",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 3.5,
+      "duration_mins": 9
+    },
+    {
+      "from": "S31",
+      "to": "S30",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.4,
+      "duration_mins": 4
+    },
+    {
+      "from": "S30",
+      "to": "S29",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S29",
+      "to": "S28",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S28",
+      "to": "S26",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.3,
+      "duration_mins": 4
+    },
+    {
+      "from": "S26",
+      "to": "S21",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S21",
+      "to": "S11",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 1.4,
+      "duration_mins": 6
+    },
+    {
+      "from": "S11",
+      "to": "S08",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.7,
+      "duration_mins": 3
+    },
+    {
+      "from": "S08",
+      "to": "S09",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S09",
+      "to": "S05",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 3
+    },
+    {
+      "from": "S05",
+      "to": "S04",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S04",
+      "to": "S01",
+      "route_id": "R19",
+      "route_name": "Tuyến 19",
+      "distance_km": 0.8,
+      "duration_mins": 4
+    },
+    {
+      "from": "S18",
+      "to": "S19",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S19",
+      "to": "S20",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.5,
+      "duration_mins": 5
+    },
+    {
+      "from": "S20",
+      "to": "S16",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S16",
+      "to": "S15",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S15",
+      "to": "S03",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.8,
+      "duration_mins": 7
+    },
+    {
+      "from": "S03",
+      "to": "S06",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.9,
+      "duration_mins": 8
+    },
+    {
+      "from": "S06",
+      "to": "S21",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 2.8,
+      "duration_mins": 10
+    },
+    {
+      "from": "S21",
+      "to": "S22",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S22",
+      "to": "S25",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.5,
+      "duration_mins": 6
+    },
+    {
+      "from": "S25",
+      "to": "S65",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S65",
+      "to": "S64",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 4.8,
+      "duration_mins": 14
+    },
+    {
+      "from": "S64",
+      "to": "S34",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.4,
+      "duration_mins": 5
+    },
+    {
+      "from": "S34",
+      "to": "S35",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.6,
+      "duration_mins": 2
+    },
+    {
+      "from": "S35",
+      "to": "S41",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 3.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S41",
+      "to": "S43",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S43",
+      "to": "S44",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.6,
+      "duration_mins": 2
+    },
+    {
+      "from": "S44",
+      "to": "S45",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S45",
+      "to": "S44",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S44",
+      "to": "S43",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.6,
+      "duration_mins": 2
+    },
+    {
+      "from": "S43",
+      "to": "S41",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S41",
+      "to": "S35",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 3.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S35",
+      "to": "S34",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.6,
+      "duration_mins": 2
+    },
+    {
+      "from": "S34",
+      "to": "S64",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.4,
+      "duration_mins": 5
+    },
+    {
+      "from": "S64",
+      "to": "S65",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 4.8,
+      "duration_mins": 14
+    },
+    {
+      "from": "S65",
+      "to": "S25",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S25",
+      "to": "S22",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.5,
+      "duration_mins": 6
+    },
+    {
+      "from": "S22",
+      "to": "S21",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S21",
+      "to": "S06",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 2.8,
+      "duration_mins": 10
+    },
+    {
+      "from": "S06",
+      "to": "S03",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.9,
+      "duration_mins": 8
+    },
+    {
+      "from": "S03",
+      "to": "S15",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.8,
+      "duration_mins": 7
+    },
+    {
+      "from": "S15",
+      "to": "S16",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S16",
+      "to": "S20",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S20",
+      "to": "S19",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.5,
+      "duration_mins": 5
+    },
+    {
+      "from": "S19",
+      "to": "S18",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S01",
+      "to": "S02",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S02",
+      "to": "S03",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S03",
+      "to": "S16",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 1.6,
+      "duration_mins": 6
+    },
+    {
+      "from": "S16",
+      "to": "S14",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 2.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S14",
+      "to": "S13",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S13",
+      "to": "S12",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 1.1,
+      "duration_mins": 5
+    },
+    {
+      "from": "S12",
+      "to": "S13",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 1.1,
+      "duration_mins": 5
+    },
+    {
+      "from": "S13",
+      "to": "S14",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S14",
+      "to": "S16",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 2.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S16",
+      "to": "S03",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 1.6,
+      "duration_mins": 6
+    },
+    {
+      "from": "S03",
+      "to": "S02",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S02",
+      "to": "S01",
+      "route_id": "R01",
+      "route_name": "Tuyến 01",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S12",
+      "to": "S13",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S13",
+      "to": "S16",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.3,
+      "duration_mins": 7
+    },
+    {
+      "from": "S16",
+      "to": "S06",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.7,
+      "duration_mins": 9
+    },
+    {
+      "from": "S06",
+      "to": "S21",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S21",
+      "to": "S26",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S26",
+      "to": "S30",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 3.8,
+      "duration_mins": 10
+    },
+    {
+      "from": "S30",
+      "to": "S35",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 4.8,
+      "duration_mins": 12
+    },
+    {
+      "from": "S35",
+      "to": "S36",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S36",
+      "to": "S37",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S37",
+      "to": "S38",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.8,
+      "duration_mins": 5
+    },
+    {
+      "from": "S38",
+      "to": "S39",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 3,
+      "duration_mins": 7
+    },
+    {
+      "from": "S39",
+      "to": "S40",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S40",
+      "to": "S39",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S39",
+      "to": "S38",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 3,
+      "duration_mins": 7
+    },
+    {
+      "from": "S38",
+      "to": "S37",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.8,
+      "duration_mins": 5
+    },
+    {
+      "from": "S37",
+      "to": "S36",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S36",
+      "to": "S35",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S35",
+      "to": "S30",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 4.8,
+      "duration_mins": 12
+    },
+    {
+      "from": "S30",
+      "to": "S26",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 3.8,
+      "duration_mins": 10
+    },
+    {
+      "from": "S26",
+      "to": "S21",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S21",
+      "to": "S06",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S06",
+      "to": "S16",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.7,
+      "duration_mins": 9
+    },
+    {
+      "from": "S16",
+      "to": "S13",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 2.3,
+      "duration_mins": 7
+    },
+    {
+      "from": "S13",
+      "to": "S12",
+      "route_id": "R150",
+      "route_name": "Tuyến 150",
+      "distance_km": 1.1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S17",
+      "to": "S16",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S16",
+      "to": "S07",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.4,
+      "duration_mins": 8
+    },
+    {
+      "from": "S07",
+      "to": "S06",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S06",
+      "to": "S21",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S21",
+      "to": "S65",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.2,
+      "duration_mins": 7
+    },
+    {
+      "from": "S65",
+      "to": "S64",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 4.8,
+      "duration_mins": 14
+    },
+    {
+      "from": "S64",
+      "to": "S34",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 1.4,
+      "duration_mins": 5
+    },
+    {
+      "from": "S34",
+      "to": "S47",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.8,
+      "duration_mins": 7
+    },
+    {
+      "from": "S47",
+      "to": "S41",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 1.5,
+      "duration_mins": 5
+    },
+    {
+      "from": "S41",
+      "to": "S49",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S49",
+      "to": "S41",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S41",
+      "to": "S47",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 1.5,
+      "duration_mins": 5
+    },
+    {
+      "from": "S47",
+      "to": "S34",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.8,
+      "duration_mins": 7
+    },
+    {
+      "from": "S34",
+      "to": "S64",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 1.4,
+      "duration_mins": 5
+    },
+    {
+      "from": "S64",
+      "to": "S65",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 4.8,
+      "duration_mins": 14
+    },
+    {
+      "from": "S65",
+      "to": "S21",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.2,
+      "duration_mins": 7
+    },
+    {
+      "from": "S21",
+      "to": "S06",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S06",
+      "to": "S07",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S07",
+      "to": "S16",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 2.4,
+      "duration_mins": 8
+    },
+    {
+      "from": "S16",
+      "to": "S17",
+      "route_id": "R53",
+      "route_name": "Tuyến 53",
+      "distance_km": 0.6,
+      "duration_mins": 3
+    },
+    {
+      "from": "S12",
+      "to": "S14",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.3,
+      "duration_mins": 5
+    },
+    {
+      "from": "S14",
+      "to": "S16",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 2.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S16",
+      "to": "S02",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.5,
+      "duration_mins": 6
+    },
+    {
+      "from": "S02",
+      "to": "S05",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S05",
+      "to": "S09",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 0.8,
+      "duration_mins": 3
+    },
+    {
+      "from": "S09",
+      "to": "S10",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 0.3,
+      "duration_mins": 1
+    },
+    {
+      "from": "S10",
+      "to": "S21",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.6,
+      "duration_mins": 6
+    },
+    {
+      "from": "S21",
+      "to": "S23",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S23",
+      "to": "S21",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 0.5,
+      "duration_mins": 2
+    },
+    {
+      "from": "S21",
+      "to": "S10",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.6,
+      "duration_mins": 6
+    },
+    {
+      "from": "S10",
+      "to": "S09",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 0.3,
+      "duration_mins": 1
+    },
+    {
+      "from": "S09",
+      "to": "S05",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 0.8,
+      "duration_mins": 3
+    },
+    {
+      "from": "S05",
+      "to": "S02",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S02",
+      "to": "S16",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.5,
+      "duration_mins": 6
+    },
+    {
+      "from": "S16",
+      "to": "S14",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 2.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S14",
+      "to": "S12",
+      "route_id": "R56",
+      "route_name": "Tuyến 56",
+      "distance_km": 1.3,
+      "duration_mins": 5
+    },
+    {
+      "from": "S58",
+      "to": "S59",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 1.7,
+      "duration_mins": 6
+    },
+    {
+      "from": "S59",
+      "to": "S60",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 3.2,
+      "duration_mins": 11
+    },
+    {
+      "from": "S60",
+      "to": "S07",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 4.1,
+      "duration_mins": 13
+    },
+    {
+      "from": "S07",
+      "to": "S06",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S06",
+      "to": "S21",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S21",
+      "to": "S26",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S26",
+      "to": "S31",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 5.2,
+      "duration_mins": 13
+    },
+    {
+      "from": "S31",
+      "to": "S35",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 3.5,
+      "duration_mins": 9
+    },
+    {
+      "from": "S35",
+      "to": "S41",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 3.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S41",
+      "to": "S43",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S43",
+      "to": "S41",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S41",
+      "to": "S35",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 3.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S35",
+      "to": "S31",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 3.5,
+      "duration_mins": 9
+    },
+    {
+      "from": "S31",
+      "to": "S26",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 5.2,
+      "duration_mins": 13
+    },
+    {
+      "from": "S26",
+      "to": "S21",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S21",
+      "to": "S06",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S06",
+      "to": "S07",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S07",
+      "to": "S60",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 4.1,
+      "duration_mins": 13
+    },
+    {
+      "from": "S60",
+      "to": "S59",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 3.2,
+      "duration_mins": 11
+    },
+    {
+      "from": "S59",
+      "to": "S58",
+      "route_id": "R30",
+      "route_name": "Tuyến 30",
+      "distance_km": 1.7,
+      "duration_mins": 6
+    },
+    {
+      "from": "S01",
+      "to": "S05",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 1,
+      "duration_mins": 5
+    },
+    {
+      "from": "S05",
+      "to": "S54",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 3.2,
+      "duration_mins": 10
+    },
+    {
+      "from": "S54",
+      "to": "S55",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 3.5,
+      "duration_mins": 11
+    },
+    {
+      "from": "S55",
+      "to": "S56",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S56",
+      "to": "S62",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 4.8,
+      "duration_mins": 14
+    },
+    {
+      "from": "S62",
+      "to": "S63",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 1.8,
+      "duration_mins": 6
+    },
+    {
+      "from": "S63",
+      "to": "S62",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 1.8,
+      "duration_mins": 6
+    },
+    {
+      "from": "S62",
+      "to": "S56",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 4.8,
+      "duration_mins": 14
+    },
+    {
+      "from": "S56",
+      "to": "S55",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 1.2,
+      "duration_mins": 4
+    },
+    {
+      "from": "S55",
+      "to": "S54",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 3.5,
+      "duration_mins": 11
+    },
+    {
+      "from": "S54",
+      "to": "S05",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 3.2,
+      "duration_mins": 10
+    },
+    {
+      "from": "S05",
+      "to": "S01",
+      "route_id": "R03",
+      "route_name": "Tuyến 03",
+      "distance_km": 1,
+      "duration_mins": 5
+    },
+    {
+      "from": "S12",
+      "to": "S13",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S13",
+      "to": "S12",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S13",
+      "to": "S14",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S14",
+      "to": "S13",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 0.4,
+      "duration_mins": 2
+    },
+    {
+      "from": "S14",
+      "to": "S16",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.1,
+      "duration_mins": 7
+    },
+    {
+      "from": "S16",
+      "to": "S14",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.1,
+      "duration_mins": 7
+    },
+    {
+      "from": "S16",
+      "to": "S06",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.7,
+      "duration_mins": 9
+    },
+    {
+      "from": "S06",
+      "to": "S16",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.7,
+      "duration_mins": 9
+    },
+    {
+      "from": "S06",
+      "to": "S21",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S21",
+      "to": "S06",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.8,
+      "duration_mins": 9
+    },
+    {
+      "from": "S21",
+      "to": "S26",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S26",
+      "to": "S21",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.6,
+      "duration_mins": 5
+    },
+    {
+      "from": "S26",
+      "to": "S28",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.3,
+      "duration_mins": 4
+    },
+    {
+      "from": "S28",
+      "to": "S26",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.3,
+      "duration_mins": 4
+    },
+    {
+      "from": "S28",
+      "to": "S30",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S30",
+      "to": "S28",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S30",
+      "to": "S31",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.9,
+      "duration_mins": 7
+    },
+    {
+      "from": "S31",
+      "to": "S30",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.9,
+      "duration_mins": 7
+    },
+    {
+      "from": "S31",
+      "to": "S35",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 3.5,
+      "duration_mins": 9
+    },
+    {
+      "from": "S35",
+      "to": "S31",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 3.5,
+      "duration_mins": 9
+    },
+    {
+      "from": "S35",
+      "to": "S36",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S36",
+      "to": "S35",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S36",
+      "to": "S37",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S37",
+      "to": "S36",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 2.2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S37",
+      "to": "S41",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S41",
+      "to": "S37",
+      "route_id": "R06",
+      "route_name": "Tuyến 06",
+      "distance_km": 1,
+      "duration_mins": 3
+    },
+    {
+      "from": "S61",
+      "to": "S62",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 4.5,
+      "duration_mins": 10
+    },
+    {
+      "from": "S62",
+      "to": "S61",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 4.5,
+      "duration_mins": 10
+    },
+    {
+      "from": "S62",
+      "to": "S65",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 5.2,
+      "duration_mins": 12
+    },
+    {
+      "from": "S65",
+      "to": "S62",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 5.2,
+      "duration_mins": 12
+    },
+    {
+      "from": "S65",
+      "to": "S64",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 4.8,
+      "duration_mins": 11
+    },
+    {
+      "from": "S64",
+      "to": "S65",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 4.8,
+      "duration_mins": 11
+    },
+    {
+      "from": "S64",
+      "to": "S34",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 1.4,
+      "duration_mins": 4
+    },
+    {
+      "from": "S34",
+      "to": "S64",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 1.4,
+      "duration_mins": 4
+    },
+    {
+      "from": "S34",
+      "to": "S41",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 3.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S41",
+      "to": "S34",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 3.1,
+      "duration_mins": 8
+    },
+    {
+      "from": "S41",
+      "to": "S49",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S49",
+      "to": "S41",
+      "route_id": "R104",
+      "route_name": "Tuyến 104",
+      "distance_km": 2,
+      "duration_mins": 6
+    },
+    {
+      "from": "S52",
+      "to": "S53",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 2.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S53",
+      "to": "S52",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 2.2,
+      "duration_mins": 5
+    },
+    {
+      "from": "S53",
+      "to": "S54",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 2.4,
+      "duration_mins": 6
+    },
+    {
+      "from": "S54",
+      "to": "S53",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 2.4,
+      "duration_mins": 6
+    },
+    {
+      "from": "S54",
+      "to": "S05",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 3.2,
+      "duration_mins": 8
+    },
+    {
+      "from": "S05",
+      "to": "S54",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 3.2,
+      "duration_mins": 8
+    },
+    {
+      "from": "S05",
+      "to": "S01",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S01",
+      "to": "S05",
+      "route_id": "R109",
+      "route_name": "Tuyến 109",
+      "distance_km": 1,
+      "duration_mins": 4
+    },
+    {
+      "from": "S54",
+      "to": "S57",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.8,
+      "duration_mins": 5
+    },
+    {
+      "from": "S57",
+      "to": "S54",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.8,
+      "duration_mins": 5
+    },
+    {
+      "from": "S57",
+      "to": "S21",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    },
+    {
+      "from": "S21",
+      "to": "S57",
+      "route_id": "R08",
+      "route_name": "Tuyến 08",
+      "distance_km": 1.5,
+      "duration_mins": 4
+    }
   ]
 }

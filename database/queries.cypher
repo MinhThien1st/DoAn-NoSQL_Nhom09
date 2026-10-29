@@ -1,5 +1,5 @@
 // ==============================================================================
-// ĐỒ ÁN MÔN HỌC NOSQL - BỘ CÂU TRUY VẤN NÂNG CAO CHO SV2 (CYPHER QUERIES)
+// ĐỒ ÁN MÔN HỌC NOSQL - BỘ CÂU TRUY VẤN NÂNG CAO (CYPHER QUERIES)
 // ==============================================================================
 
 // 1. TÌM ĐƯỜNG ĐI QUA ÍT TRẠM NHẤT GIỮA 2 TRẠM BẤT KỲ (SHORTEST PATH)
