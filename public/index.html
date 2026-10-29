@@ -35,3 +35,116 @@
     </div>
   </div>
 </div>
+
+<!-- [PHẦN GIAO DIỆN ADMIN CỦA SINH VIÊN 1] -->
+<!-- Thêm vào bên trong file public/index.html tại khu vực tab-content -->
+
+<div id="tabAdmin" class="tab-content" style="display: none;">
+  <!-- Quản lý thêm trạm xe buýt mới -->
+  <div class="card glass-card mb-3">
+    <div class="card-header bg-primary text-white d-flex align-items-center">
+      <i class="bi bi-geo-alt-fill me-2"></i>
+      <h6 class="mb-0 fw-bold">Thêm trạm xe buýt mới (CRUD - SV1)</h6>
+    </div>
+    <div class="card-body">
+      <form id="formAddStation">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <label class="form-label small text-muted">Mã trạm (ID)</label>
+            <input type="text" class="form-control form-control-sm" id="newStationId" placeholder="VD: ST_BEN_THANH" required>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label small text-muted">Tên trạm dừng</label>
+            <input type="text" class="form-control form-control-sm" id="newStationName" placeholder="VD: Bến xe Chợ Lớn" required>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted">Vĩ độ (Lat)</label>
+            <input type="number" step="any" class="form-control form-control-sm" id="newStationLat" placeholder="10.75..." required>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted">Kinh độ (Lng)</label>
+            <input type="number" step="any" class="form-control form-control-sm" id="newStationLon" placeholder="106.6..." required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-sm mt-3 w-100 fw-bold">
+          <i class="bi bi-plus-circle me-1"></i> Lưu trạm mới vào Neo4j
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quản lý điều chỉnh lịch trình tuyến xe -->
+  <div class="card glass-card mb-3">
+    <div class="card-header bg-warning text-dark d-flex align-items-center">
+      <i class="bi bi-clock-history me-2"></i>
+      <h6 class="mb-0 fw-bold">Điều chỉnh giờ xuất bến & Lịch trình tuyến xe (Barem SV1)</h6>
+    </div>
+    <div class="card-body">
+      <form id="formUpdateRouteSchedule">
+        <div class="row g-2">
+          <div class="col-md-4">
+            <label class="form-label small text-muted">Chọn tuyến xe</label>
+            <select class="form-select form-select-sm" id="adminRouteSelect" required>
+              <option value="">-- Chọn tuyến --</option>
+              <option value="R01">Tuyến 01: Bến Thành - Bến xe Chợ Lớn</option>
+              <option value="R03">Tuyến 03: Bến Thành - Thạnh Lộc</option>
+              <option value="R08">Tuyến 08: Bến xe Quận 8 - ĐH Quốc Gia</option>
+              <option value="R19">Tuyến 19: Bến Thành - KTX Khu B ĐHQG</option>
+              <option value="R30">Tuyến 30: Chợ Tân Hương - ĐH Quốc Tế</option>
+              <option value="R53">Tuyến 53: Lê Hồng Phong - ĐH Quốc Gia</option>
+              <option value="R56">Tuyến 56: Chợ Lớn - ĐH Giao Thông Vận Tải</option>
+              <option value="R150">Tuyến 150: Bến xe Chợ Lớn - Ngã 3 Tân Vạn</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted">Giờ mở bến</label>
+            <input type="time" class="form-control form-control-sm" id="adminRouteStartTime">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted">Giờ đóng bến</label>
+            <input type="time" class="form-control form-control-sm" id="adminRouteEndTime">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted">Giãn cách (phút)</label>
+            <input type="number" class="form-control form-control-sm" id="adminRouteInterval" placeholder="10">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted">Giá vé (VNĐ)</label>
+            <input type="number" class="form-control form-control-sm" id="adminRouteFare" placeholder="7000">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-warning btn-sm mt-3 w-100 fw-bold">
+          <i class="bi bi-save2 me-1"></i> Cập nhật lịch trình vào Neo4j
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Danh sách trạm hiện tại -->
+  <div class="card glass-card">
+    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+      <span class="fw-bold"><i class="bi bi-list-stars me-1"></i> Danh sách trạm dừng trong CSDL</span>
+      <button class="btn btn-outline-light btn-sm" id="btnReloadStations">
+        <i class="bi bi-arrow-clockwise"></i> Làm mới
+      </button>
+    </div>
+    <div class="card-body p-0" style="max-height: 250px; overflow-y: auto;">
+      <table class="table table-hover table-sm mb-0">
+        <thead class="table-dark sticky-top">
+          <tr>
+            <th>Mã trạm</th>
+            <th>Tên trạm dừng</th>
+            <th>Tọa độ</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="adminStationsTableBody">
+          <!-- Hiển thị danh sách động bằng JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- [SV1] Script quản trị trạm/tuyến -->
+<script src="js/admin.js"></script>

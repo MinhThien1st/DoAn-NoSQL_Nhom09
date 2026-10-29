@@ -35,8 +35,152 @@ app.get('/api/health', (req, res) => {
 });
 
 // ==========================================
-// [SV1]: CÁC API CRUD TRẠM VÀ TUYẾN SẼ ĐƯỢC THÊM TẠI ĐÂY
+// [SV1]: CÁC API CRUD TRẠM VÀ TUYẾN
+// Quy ước thuộc tính (khớp database/init_data.cypher):
+//   Station : id, name, lat, lng, zone
+//   BusRoute: id, code, name, color, interval, start_time, end_time, fare
 // ==========================================
+
+// Hàm tiện ích: có giá trị thật sự hay không (cho phép số 0)
+const hasValue = (v) => v !== undefined && v !== null && v !== '';
+
+// 1. LẤY DANH SÁCH TẤT CẢ TRẠM DỪNG (GET /api/stations)
+app.get('/api/stations', async (req, res) => {
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      'MATCH (s:Station) RETURN s.id as id, s.name as name, s.lat as lat, s.lng as lng ORDER BY s.name ASC'
+    );
+    const stations = result.records.map(record => ({
+      id: record.get('id'),
+      name: record.get('name'),
+      lat: record.get('lat'),
+      lng: record.get('lng'),
+      lon: record.get('lng') // giữ thêm "lon" để code cũ của người khác không bị lỗi
+    }));
+    res.json({ success: true, count: stations.length, data: stations });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// 2. THÊM TRẠM DỪNG MỚI (POST /api/stations)
+app.post('/api/stations', async (req, res) => {
+  const { id, name } = req.body;
+  const lat = parseFloat(req.body.lat);
+  const lng = parseFloat(hasValue(req.body.lng) ? req.body.lng : req.body.lon);
+  if (!name || Number.isNaN(lat) || Number.isNaN(lng)) {
+    return res.status(400).json({ success: false, message: 'Thiếu hoặc sai thông tin trạm (name, lat, lng là bắt buộc)' });
+  }
+  const stationId = id || 'ST_' + Date.now();
+  const session = driver.session();
+  try {
+    await session.run(
+      `CREATE (s:Station {id: $id, name: $name, lat: $lat, lng: $lng}) RETURN s`,
+      { id: stationId, name, lat, lng }
+    );
+    res.json({ success: true, message: 'Thêm trạm xe buýt thành công!', data: { id: stationId, name, lat, lng } });
+  } catch (error) {
+    // Trùng id -> vi phạm constraint station_id_unique
+    if (error.code && error.code.includes('ConstraintValidationFailed')) {
+      return res.status(409).json({ success: false, message: `Mã trạm ${stationId} đã tồn tại` });
+    }
+    res.status(500).json({ success: false, message: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// 3. SỬA THÔNG TIN TRẠM DỪNG (PUT /api/stations/:id)
+app.put('/api/stations/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  const latRaw = req.body.lat;
+  const lngRaw = hasValue(req.body.lng) ? req.body.lng : req.body.lon;
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (s:Station {id: $id})
+       SET s.name = coalesce($name, s.name),
+           s.lat  = coalesce($lat, s.lat),
+           s.lng  = coalesce($lng, s.lng)
+       RETURN s`,
+      {
+        id,
+        name: name || null,
+        lat: hasValue(latRaw) ? parseFloat(latRaw) : null,
+        lng: hasValue(lngRaw) ? parseFloat(lngRaw) : null
+      }
+    );
+    if (result.records.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy trạm cần cập nhật' });
+    }
+    res.json({ success: true, message: 'Cập nhật thông tin trạm thành công!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// 4. XÓA TRẠM DỪNG (DELETE /api/stations/:id)
+app.delete('/api/stations/:id', async (req, res) => {
+  const { id } = req.params;
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (s:Station {id: $id}) DETACH DELETE s RETURN count(*) AS soTramXoa`,
+      { id }
+    );
+    // Với DETACH DELETE ... RETURN count(*): số bản ghi = 1, giá trị = số node đã xóa
+    const deleted = result.records[0].get('soTramXoa');
+    const n = typeof deleted === 'object' && deleted.toNumber ? deleted.toNumber() : deleted;
+    if (n === 0) {
+      return res.status(404).json({ success: false, message: `Không tìm thấy trạm ${id}` });
+    }
+    res.json({ success: true, message: `Đã xóa thành công trạm ${id}` });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
+// 5. CẬP NHẬT LỊCH TRÌNH / THỜI GIAN XUẤT BẾN TUYẾN XE (PUT /api/routes/:id)
+// Body nhận: startTime, endTime, interval, fare  (ghi vào start_time, end_time cho khớp dữ liệu gốc)
+app.put('/api/routes/:id', async (req, res) => {
+  const { id } = req.params;
+  const { startTime, endTime, interval, fare } = req.body;
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (r:BusRoute {id: $id})
+       SET r.start_time = coalesce($startTime, r.start_time),
+           r.end_time   = coalesce($endTime, r.end_time),
+           r.interval   = coalesce(toInteger($interval), r.interval),
+           r.fare       = coalesce(toInteger($fare), r.fare)
+       RETURN r`,
+      {
+        id,
+        startTime: hasValue(startTime) ? startTime : null,
+        endTime: hasValue(endTime) ? endTime : null,
+        interval: hasValue(interval) ? Number(interval) : null,
+        fare: hasValue(fare) ? Number(fare) : null
+      }
+    );
+    if (result.records.length === 0) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy tuyến xe buýt để cập nhật' });
+    }
+    res.json({ success: true, message: `Đã cập nhật lịch trình tuyến xe ${id} thành công!` });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  } finally {
+    await session.close();
+  }
+});
+
 
 function findShortestPathLocal(startId, endId, mode = 'time', dataset) {
   const { stations, routes } = dataset;
